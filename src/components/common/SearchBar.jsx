@@ -55,13 +55,13 @@ export default function SearchBar({ value, onChange }) {
         onChange={handleChange}
         aria-label="Search leads"
         placeholder="Search by name, company, or email..."
-        className="block w-full pl-10 pr-10 py-2.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+        className="block min-h-11 w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-10 text-base text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-800 dark:bg-gray-900 dark:text-white sm:text-sm"
       />
       {localValue && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          className="absolute inset-y-0 right-0 flex h-11 w-11 items-center justify-center text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
           aria-label="Clear search"
         >
           <X className="h-5 w-5" aria-hidden="true" />

@@ -10,7 +10,7 @@ export default function DarkModeToggle() {
       onClick={toggleTheme}
       aria-pressed={isDarkMode}
       aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-      className="group inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+      className="group inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 shadow-sm transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
     >
       <span className="relative inline-flex h-5 w-9 items-center rounded-full bg-gray-200 transition-colors duration-200 dark:bg-gray-700">
         <span

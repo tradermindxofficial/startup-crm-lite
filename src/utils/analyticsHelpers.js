@@ -1,130 +1,286 @@
-/* src/utils/analyticsHelpers.js */
+import { STATUS_COLORS, STATUS_ORDER } from "../constants/analyticsColors";
 
-/**
- * Exact status string → display label + chart color.
- * Covers both short form and long form status names.
- */
-export const STATUS_META = {
-  New:                { label: "New",       color: "#94A3B8" },
-  Contacted:          { label: "Contacted", color: "#2563EB" },
-  "Meeting Scheduled":{ label: "Meeting",   color: "#F59E0B" },
-  "Proposal Sent":    { label: "Proposal",  color: "#7C3AED" },
-  Won:                { label: "Won",        color: "#22C55E" },
-  Lost:               { label: "Lost",       color: "#EF4444" },
+const SOURCE_ORDER = ["Website", "Referral", "LinkedIn", "Instagram", "Ads", "Cold Email"];
+
+const safeDate = (value) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 };
 
-/** Shorthand color map (used by cells in charts) */
-export const STATUS_COLORS = Object.fromEntries(
-  Object.entries(STATUS_META).map(([k, v]) => [k, v.color])
-);
+const toNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
 
-/**
- * Status distribution for the PieChart.
- * @param {Array} leads
- * @returns {{ name: string, displayName: string, value: number, percent: string, color: string }[]}
- */
-export function getStatusDistribution(leads) {
+export const normalizeStatus = (status) => {
+  if (status === "Meeting Scheduled") return "Meeting";
+  if (status === "Proposal Sent") return "Proposal";
+  return STATUS_ORDER.includes(status) ? status : "New";
+};
+
+const rangeStart = (monthsBack, now = new Date()) => new Date(now.getFullYear(), now.getMonth() - monthsBack, 1);
+
+const createMonthSeries = (count = 6, now = new Date()) =>
+  Array.from({ length: count }, (_, index) => {
+    const date = rangeStart(count - 1 - index, now);
+    return {
+      key: `${date.getFullYear()}-${date.getMonth()}`,
+      month: date.toLocaleString("default", { month: "short" }),
+      year: date.getFullYear(),
+      monthIndex: date.getMonth(),
+    };
+  });
+
+export const formatCurrency = (amount) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(toNumber(amount));
+
+export const formatPercent = (value) => `${Number.isFinite(value) ? value.toFixed(1) : "0.0"}%`;
+
+export function getStatusDistribution(leads = []) {
   const total = leads.length || 1;
-  const counts = {};
-  leads.forEach((lead) => {
-    const s = lead.status ?? "New";
-    counts[s] = (counts[s] || 0) + 1;
-  });
-  return Object.entries(counts).map(([name, value]) => ({
-    name,
-    displayName: STATUS_META[name]?.label ?? name,
-    value,
-    percent: ((value / total) * 100).toFixed(1),
-    color: STATUS_META[name]?.color ?? "#777777",
-  }));
-}
+  const counts = new Map(STATUS_ORDER.map((status) => [status, 0]));
 
-/**
- * Monthly lead counts – last 6 months.
- * @param {Array} leads
- * @returns {{ month: string, count: number }[]}
- */
-export function getMonthlyLeads(leads) {
-  const now = new Date();
-  const months = Array.from({ length: 6 }).map((_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+  leads.forEach((lead) => {
+    const status = normalizeStatus(lead?.status);
+    counts.set(status, (counts.get(status) ?? 0) + 1);
+  });
+
+  return STATUS_ORDER.map((status) => {
+    const value = counts.get(status) ?? 0;
     return {
-      month: d.toLocaleString("default", { month: "short" }),
-      key: `${d.getFullYear()}-${d.getMonth() + 1}`,
-      count: 0,
+      name: status,
+      value,
+      percent: Number(((value / total) * 100).toFixed(1)),
+      color: STATUS_COLORS[status],
     };
-  });
-
-  const map = Object.fromEntries(months.map((m) => [m.key, m]));
-  leads.forEach((lead) => {
-    if (!lead.createdAt) return;
-    const d = new Date(lead.createdAt);
-    const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
-    if (map[key]) map[key].count += 1;
-  });
-
-  return months.map((m) => ({ month: m.month, count: m.count }));
+  }).filter((entry) => entry.value > 0);
 }
 
-/**
- * Monthly conversion rate (Won / total × 100) – last 6 months.
- * @param {Array} leads
- * @returns {{ month: string, rate: number }[]}
- */
-export function getConversionByMonth(leads) {
-  const now = new Date();
-  const months = Array.from({ length: 6 }).map((_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-    return {
-      month: d.toLocaleString("default", { month: "short" }),
-      key: `${d.getFullYear()}-${d.getMonth() + 1}`,
-      total: 0,
-      won: 0,
-    };
-  });
+export function getMonthlyLeads(leads = []) {
+  const series = createMonthSeries(6);
+  const buckets = new Map(series.map((item) => [item.key, { ...item, leads: 0 }]));
 
-  const map = Object.fromEntries(months.map((m) => [m.key, m]));
   leads.forEach((lead) => {
-    if (!lead.createdAt) return;
-    const d = new Date(lead.createdAt);
-    const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
-    if (!map[key]) return;
-    map[key].total += 1;
-    if (lead.status === "Won") map[key].won += 1;
+    const date = safeDate(lead?.createdAt);
+    if (!date) return;
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    if (!buckets.has(key)) return;
+    buckets.get(key).leads += 1;
   });
 
-  return months.map((m) => ({
-    month: m.month,
-    rate: m.total ? parseFloat(((m.won / m.total) * 100).toFixed(1)) : 0,
-  }));
+  return series.map((item) => buckets.get(item.key));
 }
 
-/**
- * Compute summary stats for the Analytics header.
- * @param {Array} leads
- * @returns {{ total: number, wonRate: string, avgCloseDays: string }}
- */
-export function getSummaryStats(leads) {
-  const total = leads.length;
-  const wonLeads = leads.filter((l) => l.status === "Won");
-  const won = wonLeads.length;
-  const wonRate = total ? ((won / total) * 100).toFixed(1) : "0";
+export function getConversionByMonth(leads = []) {
+  const series = createMonthSeries(6);
+  const buckets = new Map(series.map((item) => [item.key, { ...item, total: 0, won: 0, conversionRate: 0 }]));
+
+  leads.forEach((lead) => {
+    const date = safeDate(lead?.createdAt);
+    if (!date) return;
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    if (!buckets.has(key)) return;
+    const row = buckets.get(key);
+    row.total += 1;
+    if (normalizeStatus(lead?.status) === "Won") row.won += 1;
+    row.conversionRate = row.total ? Number(((row.won / row.total) * 100).toFixed(1)) : 0;
+  });
+
+  return series.map((item) => buckets.get(item.key));
+}
+
+export function getRevenueByMonth(leads = []) {
+  const series = createMonthSeries(6);
+  const buckets = new Map(series.map((item) => [item.key, { ...item, revenue: 0 }]));
+
+  leads.forEach((lead) => {
+    if (normalizeStatus(lead?.status) !== "Won") return;
+    const date = safeDate(lead?.wonAt ?? lead?.createdAt);
+    if (!date) return;
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    if (!buckets.has(key)) return;
+    buckets.get(key).revenue += toNumber(lead?.value);
+  });
+
+  return series.map((item) => buckets.get(item.key));
+}
+
+export function getPipelineValue(leads = []) {
+  return leads.reduce((sum, lead) => {
+    const status = normalizeStatus(lead?.status);
+    if (status === "Won" || status === "Lost") return sum;
+    return sum + toNumber(lead?.value);
+  }, 0);
+}
+
+export function getWonRevenue(leads = []) {
+  return leads.reduce(
+    (sum, lead) => (normalizeStatus(lead?.status) === "Won" ? sum + toNumber(lead?.value) : sum),
+    0
+  );
+}
+
+export function getAverageSalesCycle(leads = []) {
+  const wonLeads = leads.filter((lead) => normalizeStatus(lead?.status) === "Won");
+  if (!wonLeads.length) return 0;
 
   let totalDays = 0;
-  let counted = 0;
-  wonLeads.forEach((l) => {
-    const created = new Date(l.createdAt);
-    const closed = l.closedAt
-      ? new Date(l.closedAt)
-      : l.updatedAt
-      ? new Date(l.updatedAt)
-      : null;
-    if (created && closed && !isNaN(created) && !isNaN(closed)) {
-      totalDays += (closed - created) / (1000 * 60 * 60 * 24);
-      counted += 1;
+  let count = 0;
+
+  wonLeads.forEach((lead) => {
+    const start = safeDate(lead?.createdAt);
+    const end = safeDate(lead?.wonAt ?? lead?.closedAt ?? lead?.updatedAt);
+    if (!start || !end) return;
+    const diff = (end - start) / (1000 * 60 * 60 * 24);
+    if (diff >= 0) {
+      totalDays += diff;
+      count += 1;
     }
   });
 
-  const avgCloseDays = counted ? (totalDays / counted).toFixed(1) : null;
-  return { total, wonRate, avgCloseDays };
+  return count ? Number((totalDays / count).toFixed(1)) : 0;
+}
+
+export function getLostRate(leads = []) {
+  if (!leads.length) return 0;
+  const lost = leads.filter((lead) => normalizeStatus(lead?.status) === "Lost").length;
+  return Number(((lost / leads.length) * 100).toFixed(1));
+}
+
+export function getLeadSourceStats(leads = []) {
+  const sourceMap = new Map();
+
+  leads.forEach((lead) => {
+    const rawSource = typeof lead?.source === "string" ? lead.source.trim() : "Other";
+    let source = rawSource;
+
+    if (/cold\s*call|cold\s*email|email campaign/i.test(rawSource)) source = "Cold Email";
+    if (/meta|instagram/i.test(rawSource)) source = "Instagram";
+    if (/ads|google ads|facebook ads|paid/i.test(rawSource)) source = "Ads";
+
+    sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
+  });
+
+  return [...sourceMap.entries()]
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count;
+      const leftIndex = SOURCE_ORDER.indexOf(a.source);
+      const rightIndex = SOURCE_ORDER.indexOf(b.source);
+      return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) - (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
+    });
+}
+
+export function getFunnelData(leads = []) {
+  const baseStages = ["New", "Contacted", "Meeting", "Proposal", "Won"];
+  const stageToRank = { New: 1, Contacted: 2, Meeting: 3, Proposal: 4, Won: 5, Lost: 0 };
+  const stageCounts = Object.fromEntries(baseStages.map((stage) => [stage, 0]));
+
+  leads.forEach((lead) => {
+    const status = normalizeStatus(lead?.status);
+    const rank = stageToRank[status] ?? 1;
+    baseStages.forEach((stage, index) => {
+      if (rank >= index + 1) stageCounts[stage] += 1;
+    });
+  });
+
+  return baseStages.map((stage, index) => {
+    const count = stageCounts[stage];
+    const prevCount = index === 0 ? count : stageCounts[baseStages[index - 1]];
+    const conversion = prevCount ? Number(((count / prevCount) * 100).toFixed(1)) : 0;
+    const dropOff = prevCount ? Number((100 - conversion).toFixed(1)) : 0;
+    return { stage, count, conversion, dropOff };
+  });
+}
+
+export function getSalesVelocity(leads = []) {
+  const opportunities = leads.filter((lead) => !["Won", "Lost"].includes(normalizeStatus(lead?.status))).length;
+  const total = leads.length;
+  const wonCount = leads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
+  const winRate = total ? wonCount / total : 0;
+  const wonRevenue = getWonRevenue(leads);
+  const avgDealSize = wonCount ? wonRevenue / wonCount : 0;
+  const salesCycle = getAverageSalesCycle(leads) || 1;
+  const velocity = (opportunities * winRate * avgDealSize) / salesCycle;
+
+  return {
+    opportunities,
+    winRate: Number((winRate * 100).toFixed(1)),
+    avgDealSize: Number(avgDealSize.toFixed(0)),
+    salesCycle: Number(salesCycle.toFixed(1)),
+    velocity: Number(velocity.toFixed(0)),
+  };
+}
+
+export function getForecastRevenue(leads = []) {
+  const monthly = getRevenueByMonth(leads);
+  const values = monthly.map((item) => item.revenue);
+  const avg = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+  const latest = values[values.length - 1] ?? 0;
+  const growth = latest ? Number((((avg - latest) / latest) * 100).toFixed(1)) : 0;
+  const stableMonths = values.filter((value) => value > 0).length;
+  const confidence = Math.min(95, 45 + stableMonths * 8);
+
+  return {
+    predictedRevenue: Number(avg.toFixed(0)),
+    confidence,
+    growth,
+  };
+}
+
+export function getTopPerformers(leads = []) {
+  const map = new Map();
+  leads.forEach((lead) => {
+    if (normalizeStatus(lead?.status) !== "Won") return;
+    const owner = lead?.owner || "Unassigned";
+    map.set(owner, (map.get(owner) ?? 0) + toNumber(lead?.value));
+  });
+
+  return [...map.entries()]
+    .map(([owner, revenue]) => ({ owner, revenue }))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5);
+}
+
+export function getActivityHeatmapData(leads = [], days = 120) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const firstDay = new Date(today);
+  firstDay.setDate(firstDay.getDate() - (days - 1));
+
+  const dailyMap = new Map();
+  for (let index = 0; index < days; index += 1) {
+    const current = new Date(firstDay);
+    current.setDate(firstDay.getDate() + index);
+    dailyMap.set(current.toISOString().slice(0, 10), {
+      date: current.toISOString().slice(0, 10),
+      created: 0,
+      meetings: 0,
+      calls: 0,
+      total: 0,
+    });
+  }
+
+  const updateCount = (dateString, key) => {
+    const date = safeDate(dateString);
+    if (!date) return;
+    const iso = date.toISOString().slice(0, 10);
+    const row = dailyMap.get(iso);
+    if (!row) return;
+    row[key] += 1;
+    row.total += 1;
+  };
+
+  leads.forEach((lead) => {
+    updateCount(lead?.createdAt, "created");
+    updateCount(lead?.meetingAt, "meetings");
+    updateCount(lead?.contactedAt, "calls");
+  });
+
+  return [...dailyMap.values()];
 }

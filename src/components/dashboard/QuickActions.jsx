@@ -62,14 +62,14 @@ export default function QuickActions() {
         <Link 
           to="/leads" 
           state={{ openAddModal: true }} 
-          className="flex items-center gap-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+          className="flex min-h-11 w-full items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
         >
           <Plus size={16} />
           Add New Lead
         </Link>
         
         {/* View All Leads Link */}
-        <Link to="/leads" className="flex items-center gap-2 w-full px-4 py-2 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 transition-colors">
+        <Link to="/leads" className="flex min-h-11 w-full items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
           <ListFilter size={16} />
           View All Leads
         </Link>
@@ -79,7 +79,7 @@ export default function QuickActions() {
           type="button"
           onClick={handleExportData}
           disabled={leads.length === 0}
-          className="flex items-center gap-2 w-full px-4 py-2 bg-gray-50 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 transition-colors"
+          className="flex min-h-11 w-full items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
         >
           <Download size={16} />
           Export Data

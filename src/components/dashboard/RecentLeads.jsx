@@ -52,26 +52,31 @@ export default function RecentLeads({ leads }) {
       </div>
       
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full min-w-0 border-collapse text-left">
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-800/50">
-              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Company</th>
-              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date Added</th>
+              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-5">Name</th>
+              <th className="hidden px-5 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:table-cell">Company</th>
+              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-5">Status</th>
+              <th className="hidden px-5 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 md:table-cell">Date Added</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
             {recentLeads.map((lead) => (
-              <tr key={lead.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                <td className="py-3 px-5 text-sm font-medium text-gray-900 dark:text-white">{lead.name}</td>
-                <td className="py-3 px-5 text-sm text-gray-600 dark:text-gray-300">{lead.company}</td>
-                <td className="py-3 px-5">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getBadgeStyles(lead.status)}`}>
+              <tr key={lead.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white sm:px-5">
+                  <div>
+                    <p>{lead.name}</p>
+                    <p className="truncate text-xs text-gray-500 sm:hidden">{lead.company}</p>
+                  </div>
+                </td>
+                <td className="hidden px-5 py-3 text-sm text-gray-600 dark:text-gray-300 sm:table-cell">{lead.company}</td>
+                <td className="px-4 py-3 sm:px-5">
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getBadgeStyles(lead.status)}`}>
                     {lead.status}
                   </span>
                 </td>
-                <td className="py-3 px-5 text-sm text-gray-500 dark:text-gray-400">{lead.dateAdded}</td>
+                <td className="hidden px-5 py-3 text-sm text-gray-500 dark:text-gray-400 md:table-cell">{lead.dateAdded}</td>
               </tr>
             ))}
             {recentLeads.length === 0 && (

@@ -32,7 +32,7 @@ export default function FilterBar({ activeFilter, onFilterChange, leads = [] }) 
               key={status}
               type="button"
               onClick={() => onFilterChange(status)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 ${
+              className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-all duration-150 ${
                 isActive
                   ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                   : 'bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300'

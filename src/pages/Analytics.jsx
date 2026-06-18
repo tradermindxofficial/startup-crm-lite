@@ -1,76 +1,95 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLeads } from "../context/LeadContext";
-import { getSummaryStats } from "../utils/analyticsHelpers";
+import useAnalytics from "../hooks/useAnalytics";
+import AnalyticsFilters from "../components/analytics/AnalyticsFilters";
+import StatsCards from "../components/analytics/StatsCards";
 import PieChartCard from "../components/analytics/PieChartCard";
+import FunnelChartCard from "../components/analytics/FunnelChartCard";
 import BarChartCard from "../components/analytics/BarChartCard";
 import LineChartCard from "../components/analytics/LineChartCard";
-import StatCard from "../components/analytics/StatCard";
-import { Users, TrendingUp, Clock, BarChart3 } from "lucide-react";
+import RevenueChartCard from "../components/analytics/RevenueChartCard";
+import LeadSourceChart from "../components/analytics/LeadSourceChart";
+import SalesVelocityCard from "../components/analytics/SalesVelocityCard";
+import ForecastCard from "../components/analytics/ForecastCard";
+import ActivityHeatmap from "../components/analytics/ActivityHeatmap";
+import TopPerformersCard from "../components/analytics/TopPerformersCard";
+import EmptyAnalyticsState from "../components/analytics/EmptyAnalyticsState";
+import LoadingSkeleton from "../components/analytics/LoadingSkeleton";
 
-/**
- * Analytics page – premium dashboard with summary stats and three charts.
- */
 const Analytics = () => {
   const { leads } = useLeads();
-  const { total, wonRate, avgCloseDays } = getSummaryStats(leads);
+  const [activeFilter, setActiveFilter] = useState("last30");
+  const [customRange, setCustomRange] = useState({ start: "", end: "" });
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
 
-  /* ── Empty state ── */
-  if (!leads || leads.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <div className="w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center mb-4">
-          <BarChart3 className="w-8 h-8 text-indigo-500" />
-        </div>
-        <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
-          No Analytics Yet
-        </h2>
-        <p className="text-sm text-gray-400 dark:text-gray-500 max-w-sm">
-          Start adding leads to unlock insights. Charts will populate automatically as your pipeline grows.
-        </p>
-      </div>
-    );
+  const analytics = useAnalytics(leads, activeFilter, customRange);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIsBootstrapping(false), 350);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const handleFilterChange = useCallback((filterKey) => {
+    setActiveFilter(filterKey);
+  }, []);
+
+  const handleCustomRangeChange = useCallback((range) => {
+    setCustomRange(range);
+  }, []);
+
+  if (isBootstrapping) {
+    return <LoadingSkeleton />;
+  }
+
+  if (!leads?.length) {
+    return <EmptyAnalyticsState />;
   }
 
   return (
     <div className="space-y-6">
-      {/* ── Header ── */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Analytics</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Your pipeline performance at a glance
-        </p>
-      </div>
-
-      {/* ── Summary stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard
-          icon={Users}
-          value={total}
-          label="Total Leads"
-          gradient="linear-gradient(135deg, #6366F1, #818CF8)"
-          iconBg="rgba(255,255,255,0.2)"
-        />
-        <StatCard
-          icon={TrendingUp}
-          value={`${wonRate}%`}
-          label="Won Rate"
-          gradient="linear-gradient(135deg, #22C55E, #4ADE80)"
-          iconBg="rgba(255,255,255,0.2)"
-        />
-        <StatCard
-          icon={Clock}
-          value={avgCloseDays ? `${avgCloseDays}d` : "N/A"}
-          label="Avg Time to Close"
-          gradient="linear-gradient(135deg, #F59E0B, #FBBF24)"
-          iconBg="rgba(255,255,255,0.2)"
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">Analytics Dashboard</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Track sales performance and growth trends.
+          </p>
+        </div>
+        <AnalyticsFilters
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
+          customRange={customRange}
+          onCustomRangeChange={handleCustomRangeChange}
         />
       </div>
 
-      {/* ── Charts grid ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <PieChartCard leads={leads} />
-        <BarChartCard leads={leads} />
-        <LineChartCard leads={leads} />
+      <StatsCards stats={analytics.stats} growth={analytics.growth} />
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <PieChartCard data={analytics.charts.statusDistribution} totalLeads={analytics.stats.totalLeads} />
+        <FunnelChartCard data={analytics.charts.funnelData} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <BarChartCard data={analytics.charts.monthlyLeads} />
+        <LineChartCard data={analytics.charts.conversionByMonth} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <RevenueChartCard data={analytics.charts.revenueByMonth} />
+        <LeadSourceChart data={analytics.charts.leadSourceStats} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <ActivityHeatmap data={analytics.charts.activityHeatmap} />
+        <TopPerformersCard performers={analytics.widgets.topPerformers} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <ForecastCard forecast={analytics.widgets.forecast} />
+        <SalesVelocityCard
+          velocityData={analytics.widgets.salesVelocity}
+          trend={analytics.growth.salesVelocity}
+        />
       </div>
     </div>
   );

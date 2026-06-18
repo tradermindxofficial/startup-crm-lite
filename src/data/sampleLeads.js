@@ -1,88 +1,110 @@
 /**
  * Sample leads database for initializing the Startup CRM Lite application.
- * Contains realistic Indian names, companies, and varied pipeline statuses.
- * Includes both ISO createdAt and dateAdded fields for full system compatibility.
- * 
- * Shape of Lead object:
- * {
- *   id: string,
- *   name: string,
- *   company: string,
- *   email: string,
- *   phone: string,
- *   status: 'New' | 'Contacted' | 'Meeting Scheduled' | 'Proposal Sent' | 'Won' | 'Lost',
- *   source: 'Website' | 'Referral' | 'LinkedIn' | 'Cold Call' | 'Email Campaign' | 'Other',
- *   createdAt: string, // ISO date string
- *   dateAdded: string  // YYYY-MM-DD
- * }
+ * Includes analytics-ready fields for dashboard visualizations.
  */
+const owners = ["Sarah", "Alex", "David", "Priya"];
+const sources = ["Website", "Referral", "LinkedIn", "Instagram", "Ads", "Cold Email"];
+const statuses = ["New", "Contacted", "Meeting Scheduled", "Proposal Sent", "Won", "Lost"];
+
+const createLead = (index, overrides = {}) => {
+  const monthOffset = index % 6;
+  const day = (index % 27) + 1;
+  const createdAt = new Date(2026, 5 - monthOffset, day, 10, 30, 0);
+  const status = statuses[index % statuses.length];
+  const value = 15000 + (index % 8) * 12500;
+  const owner = owners[index % owners.length];
+
+  const lead = {
+    id: `lead-${index + 1}`,
+    name: `Lead ${index + 1}`,
+    company: `Company ${index + 1}`,
+    email: `lead${index + 1}@example.com`,
+    phone: `+91 98${String(10000000 + index).slice(0, 8)}`,
+    status,
+    source: sources[index % sources.length],
+    value,
+    owner,
+    createdAt: createdAt.toISOString(),
+    dateAdded: createdAt.toISOString().slice(0, 10),
+    contactedAt: null,
+    meetingAt: null,
+    proposalAt: null,
+    wonAt: null,
+    ...overrides,
+  };
+
+  if (["Contacted", "Meeting Scheduled", "Proposal Sent", "Won", "Lost"].includes(status)) {
+    lead.contactedAt = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000).toISOString();
+  }
+  if (["Meeting Scheduled", "Proposal Sent", "Won", "Lost"].includes(status)) {
+    lead.meetingAt = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString();
+  }
+  if (["Proposal Sent", "Won", "Lost"].includes(status)) {
+    lead.proposalAt = new Date(createdAt.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString();
+  }
+  if (status === "Won") {
+    lead.wonAt = new Date(createdAt.getTime() + 12 * 24 * 60 * 60 * 1000).toISOString();
+  }
+
+  return lead;
+};
+
 export const sampleLeads = [
-  {
-    id: 'lead-1',
-    name: 'Aarav Mehta',
-    company: 'Mehta Tech Solutions',
-    email: 'aarav@mehtatech.in',
-    phone: '+91 98765 43210',
-    status: 'New',
-    source: 'LinkedIn',
-    createdAt: '2026-06-15T10:30:00.000Z',
-    dateAdded: '2026-06-15',
-  },
-  {
-    id: 'lead-2',
-    name: 'Ananya Sharma',
-    company: 'Sharma Consulting',
-    email: 'ananya@sharmaconsulting.com',
-    phone: '+91 91234 56789',
-    status: 'New',
-    source: 'Website',
-    createdAt: '2026-06-16T14:15:00.000Z',
-    dateAdded: '2026-06-16',
-  },
-  {
-    id: 'lead-3',
-    name: 'Rohan Patel',
-    company: 'Patel Enterprises',
-    email: 'rohan@patelent.co.in',
-    phone: '+91 88888 77777',
-    status: 'Contacted',
-    source: 'Referral',
-    createdAt: '2026-06-14T09:00:00.000Z',
-    dateAdded: '2026-06-14',
-  },
-  {
-    id: 'lead-4',
-    name: 'Priya Nair',
-    company: 'Nair Edutech',
-    email: 'priya@nairedu.org',
-    phone: '+91 77777 66666',
-    status: 'Meeting Scheduled',
-    source: 'Email Campaign',
-    createdAt: '2026-06-12T11:45:00.000Z',
-    dateAdded: '2026-06-12',
-  },
-  {
-    id: 'lead-5',
-    name: 'Vikram Singh',
-    company: 'Singh Logistics',
-    email: 'vikram@singhlogistics.com',
-    phone: '+91 99999 88888',
-    status: 'Won',
-    source: 'Cold Call',
-    createdAt: '2026-06-10T16:20:00.000Z',
-    dateAdded: '2026-06-10',
-  },
-  {
-    id: 'lead-6',
-    name: 'Diya Sen',
-    company: 'Sen Creative Agency',
-    email: 'diya@sencreative.in',
-    phone: '+91 95555 44444',
-    status: 'Lost',
-    source: 'Other',
-    createdAt: '2026-06-08T13:10:00.000Z',
-    dateAdded: '2026-06-08',
-  },
+  createLead(0, {
+    name: "Aarav Mehta",
+    company: "Mehta Tech Solutions",
+    email: "aarav@mehtatech.in",
+    status: "New",
+    source: "LinkedIn",
+    value: 25000,
+    owner: "Sarah",
+  }),
+  createLead(1, {
+    name: "Ananya Sharma",
+    company: "Sharma Consulting",
+    email: "ananya@sharmaconsulting.com",
+    status: "New",
+    source: "Website",
+    value: 18000,
+    owner: "Alex",
+  }),
+  createLead(2, {
+    name: "Rohan Patel",
+    company: "Patel Enterprises",
+    email: "rohan@patelent.co.in",
+    status: "Contacted",
+    source: "Referral",
+    value: 42000,
+    owner: "David",
+  }),
+  createLead(3, {
+    name: "Priya Nair",
+    company: "Nair Edutech",
+    email: "priya@nairedu.org",
+    status: "Meeting Scheduled",
+    source: "Ads",
+    value: 36000,
+    owner: "Priya",
+  }),
+  createLead(4, {
+    name: "Vikram Singh",
+    company: "Singh Logistics",
+    email: "vikram@singhlogistics.com",
+    status: "Won",
+    source: "Cold Email",
+    value: 95000,
+    owner: "Sarah",
+  }),
+  createLead(5, {
+    name: "Diya Sen",
+    company: "Sen Creative Agency",
+    email: "diya@sencreative.in",
+    status: "Lost",
+    source: "Instagram",
+    value: 22000,
+    owner: "Alex",
+  }),
+  ...Array.from({ length: 118 }, (_, index) => createLead(index + 6)),
 ];
 
 export default sampleLeads;

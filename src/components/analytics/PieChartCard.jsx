@@ -1,99 +1,95 @@
-import React from "react";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-} from "recharts";
-import { getStatusDistribution } from "../../utils/analyticsHelpers";
+import React, { memo, useState } from "react";
+import { Cell, Pie, PieChart, Sector, Tooltip } from "recharts";
+import { Card, CardContent, CardHeader } from "./Card";
+import ChartContainer from "./ChartContainer";
 
-/** Custom tooltip for the pie chart */
-const CustomTooltip = ({ active, payload }) => {
+const renderActiveShape = (props) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  return (
+    <Sector
+      cx={cx}
+      cy={cy}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius + 8}
+      startAngle={startAngle}
+      endAngle={endAngle}
+      fill={fill}
+    />
+  );
+};
+
+const PieTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
+  const item = payload[0].payload;
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl px-4 py-3 text-sm">
-      <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">{d.displayName}</p>
-      <p className="text-gray-500 dark:text-gray-400">Count: <span className="text-gray-800 dark:text-white font-bold">{d.value}</span></p>
-      <p className="text-gray-500 dark:text-gray-400">Share: <span className="text-gray-800 dark:text-white font-bold">{d.percent}%</span></p>
+    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-xl dark:border-slate-700 dark:bg-slate-900">
+      <p className="font-semibold text-slate-900 dark:text-white">{item.name}</p>
+      <p className="text-slate-600 dark:text-slate-300">{item.value} Leads</p>
+      <p className="text-slate-600 dark:text-slate-300">{item.percent}%</p>
     </div>
   );
 };
 
-/**
- * Premium pie chart card – lead status distribution.
- * @param {{ leads: Array }} props
- */
-const PieChartCard = ({ leads }) => {
-  const data = getStatusDistribution(leads ?? []);
-
-  if (!leads || leads.length === 0) {
-    return (
-      <EmptyCard title="Lead Status Distribution" message="Add leads to see their status distribution." />
-    );
-  }
+const PieChartCard = memo(function PieChartCard({ data = [], totalLeads = 0 }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const hasData = data.length > 0;
 
   return (
-    <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
-      <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-4">
-        Lead Status Distribution
-      </h3>
+    <Card className="h-full">
+      <CardHeader title="Lead Status Distribution" description="Pipeline composition by stage" />
+      <CardContent>
+        {!hasData ? (
+          <div className="flex h-64 items-center justify-center text-sm text-slate-500">No status data available.</div>
+        ) : (
+          <>
+            <div className="relative">
+              <ChartContainer height={256}>
+                <PieChart>
+                  <Pie
+                    data={data}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="58%"
+                    outerRadius="78%"
+                    paddingAngle={2}
+                    activeIndex={activeIndex}
+                    activeShape={renderActiveShape}
+                    onMouseEnter={(_, index) => setActiveIndex(index)}
+                    isAnimationActive
+                  >
+                    {data.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} stroke="transparent" />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<PieTooltip />} />
+                </PieChart>
+              </ChartContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <p className="text-3xl font-bold text-slate-900 dark:text-white">{totalLeads}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Total Leads</p>
+              </div>
+            </div>
 
-      {/* Chart */}
-      <div className="flex-1 min-h-0" style={{ height: 220 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="displayName"
-              cx="50%"
-              cy="50%"
-              innerRadius="40%"
-              outerRadius="70%"
-              paddingAngle={3}
-              isAnimationActive
-            >
-              {data.map((entry, i) => (
-                <Cell key={`cell-${i}`} fill={entry.color} stroke="transparent" />
+            <ul className="mt-4 space-y-2">
+              {data.map((item) => (
+                <li key={item.name} className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    {item.name}
+                  </span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">
+                    {item.value} ({item.percent}%)
+                  </span>
+                </li>
               ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Legend below the chart */}
-      <ul className="mt-4 space-y-2">
-        {data.map((item) => (
-          <li key={item.name} className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-2">
-              <span
-                className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ background: item.color }}
-              />
-              <span className="text-gray-600 dark:text-gray-300">{item.displayName}</span>
-            </span>
-            <span className="flex gap-3 text-gray-500 dark:text-gray-400 font-medium tabular-nums">
-              <span>{item.value} leads</span>
-              <span className="w-12 text-right">{item.percent}%</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+            </ul>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
-};
-
-/** Shared empty state component */
-const EmptyCard = ({ title, message }) => (
-  <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
-    <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-4">{title}</h3>
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-gray-400 dark:text-gray-500 text-sm text-center">{message}</p>
-    </div>
-  </div>
-);
+});
 
 export default PieChartCard;
