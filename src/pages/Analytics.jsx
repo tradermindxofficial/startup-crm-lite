@@ -21,10 +21,10 @@ const Analytics = () => {
         <div className="w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center mb-4">
           <BarChart3 className="w-8 h-8 text-indigo-500" />
         </div>
-        <h2 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-2">
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
           No Analytics Yet
         </h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500 max-w-sm">
+        <p className="text-sm text-gray-400 dark:text-gray-500 max-w-sm">
           Start adding leads to unlock insights. Charts will populate automatically as your pipeline grows.
         </p>
       </div>
@@ -35,8 +35,8 @@ const Analytics = () => {
     <div className="space-y-6">
       {/* ── Header ── */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Analytics</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Analytics</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Your pipeline performance at a glance
         </p>
       </div>

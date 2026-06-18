@@ -15,9 +15,9 @@ import { getMonthlyLeads } from "../../utils/analyticsHelpers";
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 text-sm">
-      <p className="font-semibold text-slate-700 dark:text-slate-200 mb-1">{label}</p>
-      <p className="text-slate-500 dark:text-slate-400">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl px-4 py-3 text-sm">
+      <p className="font-semibold text-gray-700 dark:text-gray-200 mb-1">{label}</p>
+      <p className="text-gray-500 dark:text-gray-400">
         Leads:{" "}
         <span className="text-blue-600 dark:text-blue-400 font-bold">{payload[0].value}</span>
       </p>
@@ -40,10 +40,10 @@ const BarChartCard = ({ leads }) => {
   return (
     <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200">
+        <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
           Leads per Month
         </h3>
-        <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Last 6 months</span>
+        <span className="text-xs font-medium text-gray-400 dark:text-gray-500">Last 6 months</span>
       </div>
 
       <div className="flex-1" style={{ height: 260 }}>
@@ -55,7 +55,7 @@ const BarChartCard = ({ leads }) => {
                 <stop offset="100%" stopColor="#2563EB" stopOpacity={0.7} />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#E2E8F0" className="dark:stroke-slate-700" />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#E2E8F0" className="dark:stroke-gray-700" />
             <XAxis
               dataKey="month"
               axisLine={false}
@@ -87,9 +87,9 @@ const BarChartCard = ({ leads }) => {
 
 const EmptyCard = ({ title, message }) => (
   <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
-    <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-4">{title}</h3>
+    <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-4">{title}</h3>
     <div className="flex-1 flex items-center justify-center">
-      <p className="text-slate-400 dark:text-slate-500 text-sm text-center">{message}</p>
+      <p className="text-gray-400 dark:text-gray-500 text-sm text-center">{message}</p>
     </div>
   </div>
 );

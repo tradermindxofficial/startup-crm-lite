@@ -13,10 +13,10 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 text-sm">
-      <p className="font-semibold text-slate-800 dark:text-slate-100 mb-1">{d.displayName}</p>
-      <p className="text-slate-500 dark:text-slate-400">Count: <span className="text-slate-800 dark:text-white font-bold">{d.value}</span></p>
-      <p className="text-slate-500 dark:text-slate-400">Share: <span className="text-slate-800 dark:text-white font-bold">{d.percent}%</span></p>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl px-4 py-3 text-sm">
+      <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">{d.displayName}</p>
+      <p className="text-gray-500 dark:text-gray-400">Count: <span className="text-gray-800 dark:text-white font-bold">{d.value}</span></p>
+      <p className="text-gray-500 dark:text-gray-400">Share: <span className="text-gray-800 dark:text-white font-bold">{d.percent}%</span></p>
     </div>
   );
 };
@@ -36,7 +36,7 @@ const PieChartCard = ({ leads }) => {
 
   return (
     <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
-      <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-4">
+      <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-4">
         Lead Status Distribution
       </h3>
 
@@ -73,9 +73,9 @@ const PieChartCard = ({ leads }) => {
                 className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
                 style={{ background: item.color }}
               />
-              <span className="text-slate-600 dark:text-slate-300">{item.displayName}</span>
+              <span className="text-gray-600 dark:text-gray-300">{item.displayName}</span>
             </span>
-            <span className="flex gap-3 text-slate-500 dark:text-slate-400 font-medium tabular-nums">
+            <span className="flex gap-3 text-gray-500 dark:text-gray-400 font-medium tabular-nums">
               <span>{item.value} leads</span>
               <span className="w-12 text-right">{item.percent}%</span>
             </span>
@@ -89,9 +89,9 @@ const PieChartCard = ({ leads }) => {
 /** Shared empty state component */
 const EmptyCard = ({ title, message }) => (
   <div className="card rounded-2xl p-6 shadow-md h-full flex flex-col">
-    <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-4">{title}</h3>
+    <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-4">{title}</h3>
     <div className="flex-1 flex items-center justify-center">
-      <p className="text-slate-400 dark:text-slate-500 text-sm text-center">{message}</p>
+      <p className="text-gray-400 dark:text-gray-500 text-sm text-center">{message}</p>
     </div>
   </div>
 );

@@ -35,7 +35,7 @@ export default function FilterBar({ activeFilter, onFilterChange, leads = [] }) 
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 ${
                 isActive
                   ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                  : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300'
+                  : 'bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300'
               }`}
             >
               <span>{status}</span>
@@ -43,7 +43,7 @@ export default function FilterBar({ activeFilter, onFilterChange, leads = [] }) 
                 className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold leading-none ${
                   isActive
                     ? 'bg-blue-700 text-blue-100'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50'
                 }`}
               >
                 {count}

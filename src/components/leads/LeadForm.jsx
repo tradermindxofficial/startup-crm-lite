@@ -53,7 +53,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Name *
         </label>
         <input
@@ -62,8 +62,8 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white ${
-            errors.name ? 'border-red-500 focus:border-red-500' : 'border-slate-300 dark:border-slate-700'
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+            errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-700'
           }`}
           placeholder="Jane Doe"
         />
@@ -71,7 +71,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
       </div>
 
       <div>
-        <label htmlFor="company" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Company *
         </label>
         <input
@@ -80,8 +80,8 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           name="company"
           value={formData.company}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white ${
-            errors.company ? 'border-red-500 focus:border-red-500' : 'border-slate-300 dark:border-slate-700'
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+            errors.company ? 'border-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-700'
           }`}
           placeholder="Acme Corp"
         />
@@ -89,7 +89,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Email *
         </label>
         <input
@@ -98,8 +98,8 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white ${
-            errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-300 dark:border-slate-700'
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+            errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-700'
           }`}
           placeholder="jane@example.com"
         />
@@ -107,7 +107,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Phone
         </label>
         <input
@@ -116,14 +116,14 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
           placeholder="(555) 123-4567"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Status
           </label>
           <select
@@ -131,13 +131,13 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
           >
             {STATUS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
           </select>
         </div>
         <div>
-          <label htmlFor="source" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="source" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Source
           </label>
           <select
@@ -145,18 +145,18 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
             name="source"
             value={formData.source}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
           >
             {SOURCE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
           </select>
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+      <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-800">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           Cancel
         </button>

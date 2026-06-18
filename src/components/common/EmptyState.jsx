@@ -19,13 +19,13 @@ export default function EmptyState({ totalLeads, searchQuery, activeFilter, onCl
     // Completely empty database — prompt the user to create a lead
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-          <Users className="w-7 h-7 text-slate-400 dark:text-slate-500" />
+        <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+          <Users className="w-7 h-7 text-gray-400 dark:text-gray-500" />
         </div>
-        <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
           No leads yet
         </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
           Get started by adding your first lead. Track contacts, companies, and your sales pipeline all in one place.
         </p>
       </div>
@@ -35,13 +35,13 @@ export default function EmptyState({ totalLeads, searchQuery, activeFilter, onCl
   // Leads exist but none match the current search/filter
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-        <SearchX className="w-7 h-7 text-slate-400 dark:text-slate-500" />
+      <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+        <SearchX className="w-7 h-7 text-gray-400 dark:text-gray-500" />
       </div>
-      <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
         No leads found
       </h3>
-      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mb-5">
+      <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-5">
         {searchQuery && activeFilter !== 'All'
           ? `No "${activeFilter}" leads match "${searchQuery}". Try adjusting your search or filter.`
           : searchQuery

@@ -1,5 +1,16 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+const THEME_STORAGE_KEY = 'startup-crm-theme';
+
+function getStoredTheme() {
+  if (typeof window === 'undefined') return false;
+  return window.localStorage.getItem(THEME_STORAGE_KEY) === 'dark';
+}
+
+function applyThemePreference(isDarkMode) {
+  document.documentElement.classList.toggle('dark', isDarkMode);
+  window.localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? 'dark' : 'light');
+}
 
 /**
  * @typedef {Object} ThemeContextType
@@ -18,15 +29,10 @@ export const ThemeContext = createContext(null);
  * @returns {JSX.Element} The rendered provider element.
  */
 export function ThemeProvider({ children }) {
-  const [isDarkMode, setIsDarkMode] = useLocalStorage('startup-crm-theme', false);
+  const [isDarkMode, setIsDarkMode] = useState(getStoredTheme);
 
-  // Sync theme changes with the document element class list
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    applyThemePreference(isDarkMode);
   }, [isDarkMode]);
 
   /**
@@ -35,7 +41,11 @@ export function ThemeProvider({ children }) {
    * @returns {void}
    */
   const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
+    setIsDarkMode((prev) => {
+      const nextMode = !prev;
+      applyThemePreference(nextMode);
+      return nextMode;
+    });
   };
 
   return (

@@ -44,8 +44,8 @@ export default function PipelineOverview({ leads }) {
   const order = ['New', 'Contacted', 'Qualified', 'Proposal', 'Won', 'Lost'];
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-6 shadow-sm">
-      <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-4">Pipeline Overview</h3>
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 shadow-sm">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Pipeline Overview</h3>
       
       {/* Horizontal Bar */}
       <div className="w-full h-4 rounded-full overflow-hidden flex mb-4">
@@ -57,12 +57,12 @@ export default function PipelineOverview({ leads }) {
             <div 
               key={status} 
               style={{ width }} 
-              className={`h-full ${statusColors[status] || 'bg-slate-300'}`}
+              className={`h-full ${statusColors[status] || 'bg-gray-300'}`}
               title={`${status}: ${count} (${Math.round((count/total)*100)}%)`}
             />
           );
         }) : (
-          <div className="w-full h-full bg-slate-100 dark:bg-slate-800" />
+          <div className="w-full h-full bg-gray-100 dark:bg-gray-800" />
         )}
       </div>
 
@@ -73,9 +73,9 @@ export default function PipelineOverview({ leads }) {
           if (count === 0) return null;
           return (
             <div key={status} className="flex items-center gap-2">
-              <span className={`w-3 h-3 rounded-full ${statusColors[status] || 'bg-slate-300'}`} />
-              <span className="text-sm text-slate-600 dark:text-slate-400">
-                {status} <span className="font-medium text-slate-900 dark:text-white">({count})</span>
+              <span className={`w-3 h-3 rounded-full ${statusColors[status] || 'bg-gray-300'}`} />
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {status} <span className="font-medium text-gray-900 dark:text-white">({count})</span>
               </span>
             </div>
           );

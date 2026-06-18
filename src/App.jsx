@@ -19,7 +19,7 @@ export default function App() {
     // Wrap the entire application in BrowserRouter to provide routing context to all nested components
     <BrowserRouter>
       {/* Main app container using Tailwind classes for full viewport height and width, and a flex layout */}
-      <div className="flex min-h-screen w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+      <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         
         {/* Render the Sidebar component, passing the current state of isSidebarOpen */}
         <Sidebar isOpen={isSidebarOpen} />

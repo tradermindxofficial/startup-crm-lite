@@ -26,21 +26,21 @@ export default function StatsCard({ title, value, icon: Icon, change, color }) {
   const TrendIcon = isPositive ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm flex flex-col justify-between">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-5 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</h3>
-        <div className={`p-2 rounded-md bg-slate-50 dark:bg-slate-800 ${color}`}>
+        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</h3>
+        <div className={`p-2 rounded-md bg-gray-50 dark:bg-gray-800 ${color}`}>
           <Icon size={18} />
         </div>
       </div>
       <div>
-        <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
         <div className="flex items-center gap-1 mt-2">
           <TrendIcon size={14} className={trendColor} />
           <span className={`text-xs font-semibold ${trendColor}`}>
             {Math.abs(change)}%
           </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
             vs last month
           </span>
         </div>

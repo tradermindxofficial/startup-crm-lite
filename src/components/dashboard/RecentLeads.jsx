@@ -41,42 +41,42 @@ export default function RecentLeads({ leads }) {
       case 'Contacted':
       case 'Qualified':
       case 'Proposal': return 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400';
-      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-400';
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400';
     }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden">
-      <div className="p-5 border-b border-slate-200 dark:border-slate-800">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-white">Recent Leads</h3>
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm overflow-hidden">
+      <div className="p-5 border-b border-gray-200 dark:border-gray-800">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white">Recent Leads</h3>
       </div>
       
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800/50">
-              <th className="py-3 px-5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
-              <th className="py-3 px-5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Company</th>
-              <th className="py-3 px-5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-              <th className="py-3 px-5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date Added</th>
+            <tr className="bg-gray-50 dark:bg-gray-800/50">
+              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Company</th>
+              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+              <th className="py-3 px-5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date Added</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
             {recentLeads.map((lead) => (
-              <tr key={lead.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="py-3 px-5 text-sm font-medium text-slate-900 dark:text-white">{lead.name}</td>
-                <td className="py-3 px-5 text-sm text-slate-600 dark:text-slate-300">{lead.company}</td>
+              <tr key={lead.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <td className="py-3 px-5 text-sm font-medium text-gray-900 dark:text-white">{lead.name}</td>
+                <td className="py-3 px-5 text-sm text-gray-600 dark:text-gray-300">{lead.company}</td>
                 <td className="py-3 px-5">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getBadgeStyles(lead.status)}`}>
                     {lead.status}
                   </span>
                 </td>
-                <td className="py-3 px-5 text-sm text-slate-500 dark:text-slate-400">{lead.dateAdded}</td>
+                <td className="py-3 px-5 text-sm text-gray-500 dark:text-gray-400">{lead.dateAdded}</td>
               </tr>
             ))}
             {recentLeads.length === 0 && (
               <tr>
-                <td colSpan={4} className="py-8 text-center text-sm text-slate-500">No leads found.</td>
+                <td colSpan={4} className="py-8 text-center text-sm text-gray-500">No leads found.</td>
               </tr>
             )}
           </tbody>

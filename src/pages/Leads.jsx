@@ -105,23 +105,23 @@ export default function Leads() {
       {/* ── Page Header ────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Leads Management
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Track and manage your potential customers.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {/* View Toggle — desktop only */}
-          <div className="hidden sm:flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md p-1 shadow-sm">
+          <div className="hidden sm:flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md p-1 shadow-sm">
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded transition-colors ${
                 viewMode === 'table'
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
               }`}
               aria-label="Table view"
             >
@@ -131,8 +131,8 @@ export default function Leads() {
               onClick={() => setViewMode('card')}
               className={`p-1.5 rounded transition-colors ${
                 viewMode === 'card'
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
               }`}
               aria-label="Card view"
             >
@@ -162,13 +162,13 @@ export default function Leads() {
 
       {/* ── Results summary ─────────────────────────────────────────────────── */}
       {!showEmptyState && (
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           Showing{' '}
-          <span className="font-semibold text-slate-700 dark:text-slate-200">
+          <span className="font-semibold text-gray-700 dark:text-gray-200">
             {filteredLeads.length}
           </span>{' '}
           of{' '}
-          <span className="font-semibold text-slate-700 dark:text-slate-200">
+          <span className="font-semibold text-gray-700 dark:text-gray-200">
             {leads.length}
           </span>{' '}
           leads
@@ -176,7 +176,7 @@ export default function Leads() {
       )}
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm overflow-hidden">
         {showEmptyState ? (
           <EmptyState
             totalLeads={leads.length}
@@ -207,7 +207,7 @@ export default function Leads() {
                   onDelete={handleDelete}
                 />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6 bg-slate-50 dark:bg-slate-900/50">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6 bg-gray-50 dark:bg-gray-900/50">
                   {filteredLeads.map(lead => (
                     <LeadCard
                       key={lead.id}
@@ -225,10 +225,10 @@ export default function Leads() {
 
       {/* ── Add / Edit Modal ────────────────────────────────────────────────── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-lg shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-lg shadow-xl overflow-hidden border border-gray-200 dark:border-gray-800">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {selectedLead ? 'Edit Lead' : 'Add New Lead'}
               </h2>
             </div>
