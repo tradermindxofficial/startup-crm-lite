@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Bell, Menu } from "lucide-react";
+import { Search, Bell, Menu, Command } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
 
 export default function TopBar({ onOpenMobileMenu }) {
@@ -14,6 +14,13 @@ export default function TopBar({ onOpenMobileMenu }) {
         >
           <Menu size={22} />
         </button>
+
+        <div className="flex min-w-0 items-center gap-2 md:hidden">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
+            <Command size={16} />
+          </div>
+          <span className="truncate text-sm font-semibold text-gray-900 dark:text-white">Startup CRM</span>
+        </div>
 
         <div className="relative hidden min-w-0 flex-1 group sm:block sm:max-w-md">
           <Search

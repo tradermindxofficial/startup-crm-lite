@@ -2,7 +2,7 @@
  * @fileoverview Main Leads page with CRUD operations, search, and status filtering.
  */
 import React, { useState, useEffect } from "react";
-import { Plus, LayoutGrid, List } from "lucide-react";
+import { Plus, LayoutGrid, List, AlertTriangle } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
@@ -16,18 +16,6 @@ import { useLeads } from "../context/LeadContext";
 
 const useResponsiveViewMode = () => {
   const [viewMode, setViewMode] = useState("card");
-
-  useEffect(() => {
-    const desktopQuery = window.matchMedia("(min-width: 1024px)");
-    const updateViewMode = () => {
-      if (desktopQuery.matches) setViewMode("table");
-    };
-
-    updateViewMode();
-    desktopQuery.addEventListener("change", updateViewMode);
-    return () => desktopQuery.removeEventListener("change", updateViewMode);
-  }, []);
-
   return [viewMode, setViewMode];
 };
 
@@ -35,6 +23,7 @@ export default function Leads() {
   const { leads, addLead, updateLead, deleteLead } = useLeads();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [leadToDelete, setLeadToDelete] = useState(null);
   const [viewMode, setViewMode] = useResponsiveViewMode();
   const location = useLocation();
 
@@ -76,10 +65,14 @@ export default function Leads() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this lead?")) {
-      deleteLead(id);
-      toast.error("Lead deleted", { icon: "🗑️" });
-    }
+    setLeadToDelete(leads.find((lead) => lead.id === id) || { id });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!leadToDelete) return;
+    deleteLead(leadToDelete.id);
+    setLeadToDelete(null);
+    toast.error("Lead deleted", { icon: "Deleted" });
   };
 
   const handleFormSubmit = (formData) => {
@@ -108,8 +101,23 @@ export default function Leads() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Tablet only: card/table toggle */}
-          <div className="hidden items-center rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-800 dark:bg-gray-900 md:flex lg:hidden">
+          <button
+            type="button"
+            onClick={handleAddClick}
+            className="flex min-h-11 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
+          >
+            <Plus size={16} />
+            Add Lead
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1 lg:max-w-xl">
+            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          </div>
+          <div className="flex shrink-0 items-center rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-800 dark:bg-gray-950 lg:ml-auto">
             <button
               type="button"
               onClick={() => setViewMode("table")}
@@ -127,7 +135,7 @@ export default function Leads() {
               onClick={() => setViewMode("card")}
               className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${
                 viewMode === "card"
-                  ? "bg-gray-100 text-gray-900 shadow-sm dark:bg-gray-800 dark:text-white"
+                  ? "bg-blue-50 text-blue-600 shadow-sm dark:bg-blue-500/20 dark:text-blue-300"
                   : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
               }`}
               aria-label="Card view"
@@ -135,21 +143,10 @@ export default function Leads() {
               <LayoutGrid size={18} />
             </button>
           </div>
-
-          <button
-            type="button"
-            onClick={handleAddClick}
-            className="flex min-h-11 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
-          >
-            <Plus size={16} />
-            Add Lead
-          </button>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
-        <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} leads={leads} />
+        <div className="mt-3">
+          <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} leads={leads} />
+        </div>
       </div>
 
       {!showEmptyState && (
@@ -160,39 +157,42 @@ export default function Leads() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div>
         {showEmptyState ? (
+          <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
           <EmptyState
             totalLeads={leads.length}
             searchQuery={searchQuery}
             activeFilter={activeFilter}
             onClearFilters={handleClearFilters}
           />
+          </div>
         ) : (
           <>
-            {/* Mobile: card view only */}
-            <div className="space-y-4 p-4 md:hidden">
-              {filteredLeads.map((lead) => (
-                <LeadCard key={lead.id} lead={lead} onEdit={handleEditClick} onDelete={handleDelete} />
-              ))}
-            </div>
-
-            {/* Tablet: hybrid toggle */}
-            <div className="hidden md:block lg:hidden">
-              {viewMode === "table" ? (
+            {viewMode === "table" ? (
+              <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900 md:hidden">
                 <LeadTable leads={filteredLeads} onEdit={handleEditClick} onDelete={handleDelete} compact />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-5 md:hidden">
+                {filteredLeads.map((lead) => (
+                  <LeadCard key={lead.id} lead={lead} onEdit={handleEditClick} onDelete={handleDelete} />
+                ))}
+              </div>
+            )}
+
+            <div className="hidden md:block">
+              {viewMode === "table" ? (
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                  <LeadTable leads={filteredLeads} onEdit={handleEditClick} onDelete={handleDelete} compact />
+                </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4 bg-gray-50 p-4 dark:bg-gray-900/50 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-5 xl:grid-cols-3">
                   {filteredLeads.map((lead) => (
                     <LeadCard key={lead.id} lead={lead} onEdit={handleEditClick} onDelete={handleDelete} />
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Desktop: full table */}
-            <div className="hidden lg:block">
-              <LeadTable leads={filteredLeads} onEdit={handleEditClick} onDelete={handleDelete} />
             </div>
           </>
         )}
@@ -220,6 +220,47 @@ export default function Leads() {
                 onSubmit={handleFormSubmit}
                 onCancel={() => setIsModalOpen(false)}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {leadToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Delete lead?</h2>
+                <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                  This will permanently remove
+                  {leadToDelete.name ? (
+                    <span className="font-semibold text-gray-900 dark:text-white"> {leadToDelete.name}</span>
+                  ) : (
+                    " this lead"
+                  )}
+                  . This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setLeadToDelete(null)}
+                className="min-h-11 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="min-h-11 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
+              >
+                Delete Lead
+              </button>
             </div>
           </div>
         </div>

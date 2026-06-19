@@ -31,12 +31,12 @@ export default function Dashboard() {
       </div>
 
       {/* Charts: full width mobile/tablet · 2 col desktop */}
-      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] xl:items-stretch">
         <PipelineOverview leads={leads} />
-        <RecentLeads leads={leads} />
+        <QuickActions />
       </div>
 
-      <QuickActions />
+      <RecentLeads leads={leads} />
     </div>
   );
 }
