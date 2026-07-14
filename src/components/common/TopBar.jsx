@@ -1,8 +1,21 @@
 import React from "react";
 import { Search, Bell, Menu, Command } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function TopBar({ onOpenMobileMenu }) {
+  const { user } = useAuth();
+
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-800 md:px-6">
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -51,8 +64,9 @@ export default function TopBar({ onOpenMobileMenu }) {
           type="button"
           className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
           aria-label="User profile"
+          title={user?.name || "User profile"}
         >
-          JD
+          {user ? getInitials(user.name) : "JD"}
         </button>
       </div>
     </header>

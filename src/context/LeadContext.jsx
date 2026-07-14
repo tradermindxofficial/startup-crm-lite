@@ -1,116 +1,190 @@
-import React, { createContext, useContext } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
-import sampleLeads from '../data/sampleLeads';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import leadService from '../services/leadService.js';
+import { useAuth } from './AuthContext.jsx';
 
-/**
- * TypeScript-style shape of the Lead object.
- * 
- * @typedef {Object} Lead
- * @property {string} id - Unique identifier for the lead.
- * @property {string} name - Contact name of the lead.
- * @property {string} company - Company name associated with the lead.
- * @property {string} email - Email address of the lead.
- * @property {string} phone - Phone number of the lead.
- * @property {'New' | 'Contacted' | 'Meeting Scheduled' | 'Proposal Sent' | 'Won' | 'Lost'} status - Pipeline status.
- * @property {'Website' | 'Referral' | 'LinkedIn' | 'Cold Call' | 'Email Campaign' | 'Other'} source - Lead acquisition source.
- * @property {string} createdAt - ISO date-time string when the lead was created.
- * @property {string} dateAdded - Date string (YYYY-MM-DD) for backward compatibility with UI views.
- */
-
-/**
- * @typedef {Object} LeadContextType
- * @property {Lead[]} leads - Array of leads.
- * @property {function(Omit<Lead, 'id' | 'createdAt' | 'dateAdded'>): void} addLead - Adds a new lead.
- * @property {function(string, Partial<Lead>): void} updateLead - Updates an existing lead.
- * @property {function(string): void} deleteLead - Deletes a lead by its ID.
- * @property {function(string): Lead | undefined} getLeadById - Finds a lead by its ID.
- */
-
-/** @type {React.Context<LeadContextType | null>} */
 export const LeadContext = createContext(null);
 
 /**
- * LeadProvider component that wraps the application and hosts the global leads state.
- * 
- * @param {Object} props - Component props.
- * @param {React.ReactNode} props.children - Child components.
- * @returns {JSX.Element} The rendered provider element.
+ * LeadProvider component hosting global state for CRM Leads.
+ * Handles API calls, mapping MongoDB ObjectIds, and managing pagination states.
  */
 export function LeadProvider({ children }) {
-  const [leads, setLeads] = useLocalStorage('startup-crm-leads', sampleLeads);
+  const [leads, setLeadsState] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 20,
+    pages: 0,
+  });
+  const { token } = useAuth();
 
   /**
-   * Adds a new lead. Generates a unique ID and appends creation dates.
+   * Helper utility to normalize backend MongoDB documents.
+   * Maps _id to id for seamless compatibility with UI components expecting localStorage shapes.
    * 
-   * @param {Omit<Lead, 'id' | 'createdAt' | 'dateAdded'>} leadData - Lead details.
-   * @returns {void}
+   * @param {Array|Object} data - Lead document(s) from API.
+   * @returns {Array|Object} Normalized document(s).
    */
-  const addLead = (leadData) => {
-    const id = typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : Date.now().toString();
-    const createdAt = new Date().toISOString();
-    const dateAdded = createdAt.split('T')[0];
-    
-    const newLead = {
-      ...leadData,
-      id,
-      createdAt,
-      dateAdded,
-    };
-    
-    setLeads((prev) => [newLead, ...prev]);
+  const normalize = (data) => {
+    if (Array.isArray(data)) {
+      return data.map((item) => ({
+        ...item,
+        id: item._id || item.id,
+      }));
+    }
+    if (data && typeof data === 'object') {
+      return {
+        ...data,
+        id: data._id || data.id,
+      };
+    }
+    return data;
   };
 
   /**
-   * Updates an existing lead in-place.
-   * 
-   * @param {string} id - Unique identifier of the lead to update.
-   * @param {Partial<Lead>} updatedFields - Fields to modify.
-   * @returns {void}
+   * Safe state updater that normalizes leads before storing.
    */
-  const updateLead = (id, updatedFields) => {
-    setLeads((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, ...updatedFields } : l))
-    );
+  const setLeads = (data) => {
+    setLeadsState(normalize(data));
   };
 
   /**
-   * Deletes a lead by its unique ID.
+   * Query leads dataset from the API using filter parameters.
    * 
-   * @param {string} id - The ID of the lead to remove.
-   * @returns {void}
+   * @param {Object} [params] - Query options (search, status, page, etc.).
    */
-  const deleteLead = (id) => {
-    setLeads((prev) => prev.filter((l) => l.id !== id));
+  const fetchLeads = async (params) => {
+    setIsLoading(true);
+    try {
+      const response = await leadService.getLeads(params);
+      if (response && response.success) {
+        setLeads(response.data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+        }
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to fetch leads');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Automatically fetch initial leads dataset if user session is active
+  useEffect(() => {
+    if (token) {
+      fetchLeads();
+    } else {
+      setLeads([]);
+    }
+  }, [token]);
+
+  /**
+   * Create a new lead record via API.
+   * 
+   * @param {Object} leadData - Lead attributes.
+   */
+  const addLead = async (leadData) => {
+    try {
+      const response = await leadService.createLead(leadData);
+      if (response && response.success) {
+        const newLead = normalize(response.data);
+        setLeadsState((prev) => [newLead, ...prev]);
+        toast.success('Lead created successfully');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create lead');
+      throw error;
+    }
   };
 
   /**
-   * Retrieves a lead from the current state by its unique ID.
+   * Update an existing lead record.
+   * Supports either full field updates or single PATCH status changes.
    * 
-   * @param {string} id - The ID of the lead.
-   * @returns {Lead | undefined} The matching lead object or undefined.
+   * @param {string} id - Lead ID.
+   * @param {Object} updatedFields - Fields to update.
+   */
+  const updateLead = async (id, updatedFields) => {
+    try {
+      let response;
+      const keys = Object.keys(updatedFields);
+      
+      // Call single status PATCH if only status was updated
+      if (keys.length === 1 && keys[0] === 'status') {
+        response = await leadService.updateLeadStatus(id, updatedFields.status);
+      } else {
+        response = await leadService.updateLead(id, updatedFields);
+      }
+
+      if (response && response.success) {
+        const updatedLead = normalize(response.data);
+        setLeadsState((prev) =>
+          prev.map((l) => (l.id === id || l._id === id ? updatedLead : l))
+        );
+        toast.success('Lead updated successfully');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update lead');
+      throw error;
+    }
+  };
+
+  /**
+   * Delete a lead by its ID.
+   * 
+   * @param {string} id - Lead ID.
+   */
+  const deleteLead = async (id) => {
+    try {
+      const response = await leadService.deleteLead(id);
+      if (response && response.success) {
+        setLeadsState((prev) => prev.filter((l) => l.id !== id && l._id !== id));
+        toast.success('Lead deleted successfully');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete lead');
+      throw error;
+    }
+  };
+
+  /**
+   * Find a lead locally from the active state by its ID.
+   * 
+   * @param {string} id - Lead ID.
+   * @returns {Object|undefined} Lead object if found.
    */
   const getLeadById = (id) => {
-    return leads.find((l) => l.id === id);
+    return leads.find((l) => l.id === id || l._id === id);
   };
 
   return (
-    <LeadContext.Provider value={{ leads, addLead, updateLead, deleteLead, getLeadById }}>
+    <LeadContext.Provider
+      value={{
+        leads,
+        isLoading,
+        pagination,
+        fetchLeads,
+        addLead,
+        updateLead,
+        deleteLead,
+        getLeadById,
+      }}
+    >
       {children}
     </LeadContext.Provider>
   );
 }
 
 /**
- * Custom React hook to consume the Leads context.
- * Throws a descriptive runtime error if invoked outside of a LeadProvider context scope.
- * 
- * @returns {LeadContextType} The verified LeadContext values.
- * @throws {Error} If context is consumed outside of LeadProvider.
+ * Custom React hook to consume the LeadContext.
  */
 export function useLeads() {
   const context = useContext(LeadContext);
   if (!context) {
-    throw new Error('useLeads must be used within a LeadProvider. Make sure the component is wrapped by <LeadProvider>.');
+    throw new Error('useLeads must be used within a LeadProvider');
   }
   return context;
 }
