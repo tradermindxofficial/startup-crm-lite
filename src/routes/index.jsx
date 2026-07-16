@@ -9,6 +9,8 @@ const Analytics = lazy(() => import('../pages/Analytics'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const Login = lazy(() => import('../pages/Login'));
 const Register = lazy(() => import('../pages/Register'));
+const Profile = lazy(() => import('../pages/Profile'));
+const Settings = lazy(() => import('../pages/Settings'));
 
 /**
  * Route protection guard.
@@ -31,7 +33,7 @@ function ProtectedRoute() {
 
 /**
  * AppRoutes component configuring React Router paths.
- * Enforces session locks on dashboard, leads, and analytics components.
+ * Enforces session locks on dashboard, leads, analytics, profile, and settings components.
  */
 export default function AppRoutes() {
   return (
@@ -52,6 +54,8 @@ export default function AppRoutes() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
         {/* Fallback 404 handler */}
