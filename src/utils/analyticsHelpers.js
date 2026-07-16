@@ -13,6 +13,8 @@ const toNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const getLeadValue = (lead) => toNumber(lead?.dealValue ?? lead?.value);
+
 export const normalizeStatus = (status) => {
   if (status === "Meeting Scheduled") return "Meeting";
   if (status === "Proposal Sent") return "Proposal";
@@ -104,7 +106,7 @@ export function getRevenueByMonth(leads = []) {
     if (!date) return;
     const key = `${date.getFullYear()}-${date.getMonth()}`;
     if (!buckets.has(key)) return;
-    buckets.get(key).revenue += toNumber(lead?.value);
+    buckets.get(key).revenue += getLeadValue(lead);
   });
 
   return series.map((item) => buckets.get(item.key));
@@ -114,13 +116,13 @@ export function getPipelineValue(leads = []) {
   return leads.reduce((sum, lead) => {
     const status = normalizeStatus(lead?.status);
     if (status === "Won" || status === "Lost") return sum;
-    return sum + toNumber(lead?.value);
+    return sum + getLeadValue(lead);
   }, 0);
 }
 
 export function getWonRevenue(leads = []) {
   return leads.reduce(
-    (sum, lead) => (normalizeStatus(lead?.status) === "Won" ? sum + toNumber(lead?.value) : sum),
+    (sum, lead) => (normalizeStatus(lead?.status) === "Won" ? sum + getLeadValue(lead) : sum),
     0
   );
 }
@@ -156,24 +158,13 @@ export function getLeadSourceStats(leads = []) {
   const sourceMap = new Map();
 
   leads.forEach((lead) => {
-    const rawSource = typeof lead?.source === "string" ? lead.source.trim() : "Other";
-    let source = rawSource;
-
-    if (/cold\s*call|cold\s*email|email campaign/i.test(rawSource)) source = "Cold Email";
-    if (/meta|instagram/i.test(rawSource)) source = "Instagram";
-    if (/ads|google ads|facebook ads|paid/i.test(rawSource)) source = "Ads";
-
+    const source = typeof lead?.source === "string" ? lead.source.trim() : "Other";
     sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
   });
 
   return [...sourceMap.entries()]
     .map(([source, count]) => ({ source, count }))
-    .sort((a, b) => {
-      if (b.count !== a.count) return b.count - a.count;
-      const leftIndex = SOURCE_ORDER.indexOf(a.source);
-      const rightIndex = SOURCE_ORDER.indexOf(b.source);
-      return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) - (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
-    });
+    .sort((a, b) => b.count - a.count);
 }
 
 export function getFunnelData(leads = []) {
@@ -238,7 +229,7 @@ export function getTopPerformers(leads = []) {
   leads.forEach((lead) => {
     if (normalizeStatus(lead?.status) !== "Won") return;
     const owner = lead?.owner || "Unassigned";
-    map.set(owner, (map.get(owner) ?? 0) + toNumber(lead?.value));
+    map.set(owner, (map.get(owner) ?? 0) + getLeadValue(lead));
   });
 
   return [...map.entries()]
@@ -283,4 +274,19 @@ export function getActivityHeatmapData(leads = [], days = 120) {
   });
 
   return [...dailyMap.values()];
+}
+
+export function getTotalRevenuePipeline(leads = []) {
+  return leads.reduce((sum, lead) => sum + toNumber(lead?.dealValue), 0);
+}
+
+export function getAverageDealValue(leads = []) {
+  if (!leads.length) return 0;
+  const total = getTotalRevenuePipeline(leads);
+  return total / leads.length;
+}
+
+export function getHighestDealValue(leads = []) {
+  if (!leads.length) return 0;
+  return Math.max(...leads.map((lead) => toNumber(lead?.dealValue)), 0);
 }

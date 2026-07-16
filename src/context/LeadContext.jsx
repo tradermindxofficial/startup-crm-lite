@@ -32,16 +32,22 @@ export function LeadProvider({ children }) {
       return data.map((item) => ({
         ...item,
         id: item._id || item.id,
+        value: item.dealValue ?? item.value ?? 0,
+        dealValue: item.dealValue ?? item.value ?? 0,
       }));
     }
     if (data && typeof data === 'object') {
       return {
         ...data,
         id: data._id || data.id,
+        value: data.dealValue ?? data.value ?? 0,
+        dealValue: data.dealValue ?? data.value ?? 0,
       };
     }
     return data;
   };
+
+  const [heatmapData, setHeatmapData] = useState([]);
 
   /**
    * Safe state updater that normalizes leads before storing.
@@ -72,12 +78,28 @@ export function LeadProvider({ children }) {
     }
   };
 
-  // Automatically fetch initial leads dataset if user session is active
+  /**
+   * Fetch heatmap data from backend.
+   */
+  const fetchHeatmapData = async () => {
+    try {
+      const response = await leadService.getHeatmapStats();
+      if (response && response.success) {
+        setHeatmapData(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch heatmap data:', error);
+    }
+  };
+
+  // Automatically fetch initial leads and heatmap dataset if user session is active
   useEffect(() => {
     if (token) {
       fetchLeads();
+      fetchHeatmapData();
     } else {
       setLeads([]);
+      setHeatmapData([]);
     }
   }, [token]);
 
@@ -93,6 +115,7 @@ export function LeadProvider({ children }) {
         const newLead = normalize(response.data);
         setLeadsState((prev) => [newLead, ...prev]);
         toast.success('Lead created successfully');
+        fetchHeatmapData();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create lead');
@@ -125,6 +148,7 @@ export function LeadProvider({ children }) {
           prev.map((l) => (l.id === id || l._id === id ? updatedLead : l))
         );
         toast.success('Lead updated successfully');
+        fetchHeatmapData();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update lead');
@@ -143,6 +167,7 @@ export function LeadProvider({ children }) {
       if (response && response.success) {
         setLeadsState((prev) => prev.filter((l) => l.id !== id && l._id !== id));
         toast.success('Lead deleted successfully');
+        fetchHeatmapData();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete lead');
@@ -164,9 +189,11 @@ export function LeadProvider({ children }) {
     <LeadContext.Provider
       value={{
         leads,
+        heatmapData,
         isLoading,
         pagination,
         fetchLeads,
+        fetchHeatmapData,
         addLead,
         updateLead,
         deleteLead,

@@ -18,35 +18,53 @@ const FunnelTooltip = ({ active, payload }) => {
 };
 
 const FunnelChartCard = memo(function FunnelChartCard({ data = [] }) {
+  const getShortStage = (stage) => {
+    if (stage === "Meeting Scheduled") return "Meeting";
+    if (stage === "Proposal Sent") return "Proposal";
+    return stage;
+  };
+
   const chartData = data.map((item) => ({
     ...item,
     fill: STATUS_COLORS[item.stage] ?? "#94A3B8",
-    label: `${item.stage} ${item.count}`,
+    label: `${getShortStage(item.stage)}: ${item.count}`,
   }));
+
+  const hasData = data.length > 0 && data.some((item) => item.count > 0);
 
   return (
     <Card className="h-full">
       <CardHeader title="Sales Funnel" description="Stage conversion and drop-off metrics" />
       <CardContent>
-        <ChartContainer>
-          <FunnelChart>
-            <Tooltip content={<FunnelTooltip />} />
-            <Funnel dataKey="count" data={chartData} isAnimationActive>
-              <LabelList position="right" fill="#334155" stroke="none" dataKey="label" />
-            </Funnel>
-          </FunnelChart>
-        </ChartContainer>
+        {!hasData ? (
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No funnel data available.
+          </div>
+        ) : (
+          <>
+            <ChartContainer>
+              <FunnelChart margin={{ top: 10, right: 120, left: 20, bottom: 10 }}>
+                <Tooltip content={<FunnelTooltip />} />
+                <Funnel dataKey="count" data={chartData} isAnimationActive>
+                  <LabelList position="right" fill="#64748B" stroke="none" dataKey="label" fontSize={11} />
+                </Funnel>
+              </FunnelChart>
+            </ChartContainer>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {data.map((item) => (
-            <div key={item.stage} className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-              <p className="text-xs text-slate-500">{item.stage}</p>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">{item.count}</p>
-              <p className="text-xs text-emerald-600">{item.conversion}% conv</p>
-              <p className="text-xs text-rose-500">{item.dropOff}% drop</p>
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+              {data.map((item) => (
+                <div key={item.stage} className="rounded-xl border border-slate-200 p-2.5 dark:border-slate-700">
+                  <p className="truncate text-xs font-semibold text-slate-500" title={item.stage}>
+                    {getShortStage(item.stage)}
+                  </p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{item.count}</p>
+                  <p className="text-[10px] font-semibold text-emerald-600 mt-0.5">{item.conversion}% conv</p>
+                  <p className="text-[10px] font-semibold text-rose-500">{item.dropOff}% drop</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

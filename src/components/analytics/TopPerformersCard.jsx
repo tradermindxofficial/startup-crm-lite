@@ -2,19 +2,39 @@ import React, { memo } from "react";
 import { Medal } from "lucide-react";
 import { Card, CardContent, CardHeader } from "./Card";
 import { formatCurrency } from "../../utils/analyticsHelpers";
+import { useAuth } from "../../context/AuthContext";
 
 const TopPerformersCard = memo(function TopPerformersCard({ performers = [] }) {
+  const { user } = useAuth();
+
+  // Map performers: resolve MongoDB ObjectIds to logged-in user details, or keep name string
+  const formattedPerformers = performers.map((performer) => {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(performer.owner);
+    if (isObjectId && user) {
+      return {
+        ...performer,
+        name: user.name || "Sales Representative",
+        role: user.role || "Sales Rep",
+      };
+    }
+    return {
+      ...performer,
+      name: performer.owner,
+      role: "Sales Rep",
+    };
+  });
+
   return (
     <Card className="h-full">
       <CardHeader title="Top Performers" description="Ranked by won revenue" />
       <CardContent>
-        {!performers.length ? (
+        {!formattedPerformers.length ? (
           <div className="flex h-48 items-center justify-center text-sm text-slate-500">
-            No won deals yet to rank performers.
+            No performers available yet.
           </div>
         ) : (
           <ul className="space-y-3">
-            {performers.map((performer, index) => (
+            {formattedPerformers.map((performer, index) => (
               <li
                 key={performer.owner}
                 className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 dark:border-slate-700"
@@ -24,8 +44,8 @@ const TopPerformersCard = memo(function TopPerformersCard({ performers = [] }) {
                     {index + 1}
                   </span>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-white">{performer.owner}</p>
-                    <p className="text-xs text-slate-500">Sales Rep</p>
+                    <p className="font-medium text-slate-900 dark:text-white">{performer.name}</p>
+                    <p className="text-xs text-slate-500">{performer.role}</p>
                   </div>
                 </div>
                 <div className="text-right">

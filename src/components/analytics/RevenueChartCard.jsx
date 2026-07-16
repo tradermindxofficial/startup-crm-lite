@@ -23,12 +23,19 @@ const RevenueTooltip = ({ active, payload, label }) => {
 };
 
 const RevenueChartCard = memo(function RevenueChartCard({ data = [] }) {
+  const hasRevenue = data.some((item) => item.revenue > 0);
+
   return (
     <Card className="h-full">
       <CardHeader title="Revenue Analytics" description="Won deal revenue by month" />
       <CardContent>
-        <ChartContainer>
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        {!hasRevenue ? (
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No revenue data available.
+          </div>
+        ) : (
+          <ChartContainer>
+            <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={CHART_COLORS.success} stopOpacity={0.35} />
@@ -52,8 +59,9 @@ const RevenueChartCard = memo(function RevenueChartCard({ data = [] }) {
                 fill="url(#revenueGradient)"
                 isAnimationActive
               />
-          </AreaChart>
-        </ChartContainer>
+            </AreaChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

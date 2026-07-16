@@ -16,12 +16,19 @@ const SourceTooltip = ({ active, payload }) => {
 };
 
 const LeadSourceChart = memo(function LeadSourceChart({ data = [] }) {
+  const hasData = data.length > 0 && data.some((item) => item.count > 0);
+
   return (
     <Card className="h-full">
       <CardHeader title="Lead Source Analytics" description="Top acquisition channels" />
       <CardContent>
-        <ChartContainer>
-          <BarChart data={data} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
+        {!hasData ? (
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No lead source data available.
+          </div>
+        ) : (
+          <ChartContainer>
+            <BarChart data={data} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
               <CartesianGrid horizontal={false} strokeDasharray="3 3" stroke={CHART_COLORS.border} />
               <XAxis type="number" allowDecimals={false} axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.slate, fontSize: 12 }} />
               <YAxis
@@ -34,8 +41,9 @@ const LeadSourceChart = memo(function LeadSourceChart({ data = [] }) {
               />
               <Tooltip content={<SourceTooltip />} cursor={{ fill: "rgba(37, 99, 235, 0.08)" }} />
               <Bar dataKey="count" fill={CHART_COLORS.primarySoft} radius={[0, 8, 8, 0]} isAnimationActive />
-          </BarChart>
-        </ChartContainer>
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

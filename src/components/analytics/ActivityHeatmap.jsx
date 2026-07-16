@@ -35,57 +35,67 @@ const ActivityHeatmap = memo(function ActivityHeatmap({ data = [] }) {
     return firstMonth === lastMonth ? firstMonth : `${firstMonth} - ${lastMonth}`;
   }, [data]);
 
+  const hasActivity = data.some((day) => day.total > 0);
+
   return (
     <Card className="h-full">
       <CardHeader title="Activity Heatmap" description={`Monthly activity view · ${monthLabel}`} />
       <CardContent>
-        <div className="overflow-x-auto">
-          <div className="inline-flex min-w-full flex-col gap-2">
-            <div className="flex gap-1">
-              {weeks.map((week, weekIndex) => (
-                <div key={`week-${weekIndex}`} className="flex flex-col gap-1">
-                  {week.map((day) => (
-                    <div
-                      key={day.date}
-                      title={`${day.date}\nCreated: ${day.created}\nMeetings: ${day.meetings}\nCalls: ${day.calls}`}
+        {!hasActivity ? (
+          <div className="flex h-[280px] items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No activity recorded yet.
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <div className="inline-flex min-w-full flex-col gap-2">
+                <div className="flex gap-1">
+                  {weeks.map((week, weekIndex) => (
+                    <div key={`week-${weekIndex}`} className="flex flex-col gap-1">
+                      {week.map((day) => (
+                        <div
+                          key={day.date}
+                      title={`${day.date}\nCreated: ${day.created}\nMeetings: ${day.meetings}\nCalls: ${day.calls}\nProposals: ${day.proposals || 0}\nWon: ${day.won || 0}\nLost: ${day.lost || 0}`}
                       className={`h-3.5 w-3.5 rounded-sm ${LEVELS[getLevel(day.total)]}`}
                       aria-label={`${day.date}: ${day.total} activities`}
-                    />
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
-          <span>Less</span>
-          {LEVELS.map((level, index) => (
-            <span key={level} className={`h-3 w-3 rounded-sm ${level}`} title={`Level ${index}`} />
-          ))}
-          <span>More</span>
-        </div>
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+              <span>Less</span>
+              {LEVELS.map((level, index) => (
+                <span key={level} className={`h-3 w-3 rounded-sm ${level}`} title={`Level ${index}`} />
+              ))}
+              <span>More</span>
+            </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
-          <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-            <p className="text-xs text-slate-500">Leads Created</p>
-            <p className="font-semibold text-slate-900 dark:text-white">
-              {data.reduce((sum, day) => sum + day.created, 0)}
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-            <p className="text-xs text-slate-500">Meetings Scheduled</p>
-            <p className="font-semibold text-slate-900 dark:text-white">
-              {data.reduce((sum, day) => sum + day.meetings, 0)}
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-            <p className="text-xs text-slate-500">Calls Logged</p>
-            <p className="font-semibold text-slate-900 dark:text-white">
-              {data.reduce((sum, day) => sum + day.calls, 0)}
-            </p>
-          </div>
-        </div>
+            <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+              <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                <p className="text-xs text-slate-500">Leads Created</p>
+                <p className="font-semibold text-slate-900 dark:text-white">
+                  {data.reduce((sum, day) => sum + day.created, 0)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                <p className="text-xs text-slate-500">Meetings Scheduled</p>
+                <p className="font-semibold text-slate-900 dark:text-white">
+                  {data.reduce((sum, day) => sum + day.meetings, 0)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                <p className="text-xs text-slate-500">Calls Logged</p>
+                <p className="font-semibold text-slate-900 dark:text-white">
+                  {data.reduce((sum, day) => sum + day.calls, 0)}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

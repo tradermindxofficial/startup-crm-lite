@@ -80,6 +80,16 @@ const leadService = {
     const response = await api.get('/api/leads/stats/monthly');
     return response.data;
   },
+
+  /**
+   * Retrieve activity heatmap statistics for the preceding 120 days.
+   * 
+   * @returns {Promise<Array>} List of daily aggregates for the Activity Heatmap.
+   */
+  getHeatmapStats: async () => {
+    const response = await api.get('/api/leads/stats/heatmap');
+    return response.data;
+  },
 };
 
 export default leadService;

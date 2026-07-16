@@ -1,0 +1,26 @@
+- [x] Update Backend Lead Schema (`backend/models/Lead.js`)
+  - [x] Add dealValue and expectedCloseDate properties
+  - [x] Add contactedAt, meetingAt, proposalAt, wonAt, and lostAt activity timestamp fields
+- [x] Update Backend Routing & Controllers
+  - [x] Add dealValue and expectedCloseDate express validators (`backend/routes/leadRoutes.js`)
+  - [x] Update createLead request mapping to support both deal details and activity tracking (`backend/controllers/leadController.js`)
+  - [x] Update updateLead and updateLeadStatus controllers to track stage transitions and save activity timestamps dynamically (`backend/controllers/leadController.js`)
+- [x] Create Reusable Statistics Helpers (`src/utils/analyticsHelpers.js`)
+  - [x] Add getTotalRevenuePipeline, getAverageDealValue, getHighestDealValue helpers
+- [x] Update Frontend Leads Management Pages
+  - [x] Add new Deal Value and Expected Close Date fields to LeadForm (`src/components/leads/LeadForm.jsx`)
+  - [x] Render Deal Value, close date, and dynamic priority level on LeadCard (`src/components/leads/LeadCard.jsx`)
+  - [x] Display Deal Value and expected close date columns in LeadTable (`src/components/leads/LeadTable.jsx`)
+  - [x] Configure desktop table to render full columns on Leads page (`src/pages/Leads.jsx`)
+- [x] Update Dashboard Calculations (`src/pages/Dashboard.jsx`)
+  - [x] Render Total Leads, Revenue Pipeline, Average Deal, and Highest Deal cards using Indian currency format
+- [x] Analytics & Dashboard Polish
+  - [x] Fix currency consistency using ₹ (INR) throughout the application
+  - [x] Synchronize dashboard and analytics calculation engines (`src/context/LeadContext.jsx`, `src/utils/analyticsHelpers.js`)
+  - [x] Resolve Top Performers MongoDB ObjectIds to Representative Name/Role (`src/components/analytics/TopPerformersCard.jsx`)
+  - [x] Implement robust empty states for all charts/cards (Revenue, Forecast, Velocity, Lead Source, Heatmap, Funnel, Leads trend, Conversion trend)
+  - [x] Improve Sales Funnel spacing and label layout on mobile (`src/components/analytics/FunnelChartCard.jsx`)
+  - [x] Shorten displayed stage labels in Pipeline Overview detail boxes (`src/components/dashboard/PipelineOverview.jsx`)
+  - [x] Fully functional Notification Badge drop-panel with unread badge count updates, click-to-read, and empty states (`src/components/common/TopBar.jsx`)
+- [x] Verification & Testing
+  - [x] Verify routing, layouts, empty states, and theme compatibility in light/dark mode

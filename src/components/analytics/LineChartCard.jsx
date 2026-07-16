@@ -22,12 +22,19 @@ const LineTooltip = ({ active, payload, label }) => {
 };
 
 const LineChartCard = memo(function LineChartCard({ data = [] }) {
+  const hasData = data.length > 0 && data.some((item) => item.total > 0);
+
   return (
     <Card className="h-full">
       <CardHeader title="Monthly Conversion Trend" description="Won leads divided by total leads" />
       <CardContent>
-        <ChartContainer>
-          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        {!hasData ? (
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No conversion data available.
+          </div>
+        ) : (
+          <ChartContainer>
+            <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={CHART_COLORS.border} />
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.slate, fontSize: 12 }} />
               <YAxis
@@ -47,8 +54,9 @@ const LineChartCard = memo(function LineChartCard({ data = [] }) {
                 activeDot={{ r: 6 }}
                 isAnimationActive
               />
-          </LineChart>
-        </ChartContainer>
+            </LineChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

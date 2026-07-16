@@ -17,7 +17,7 @@ import EmptyAnalyticsState from "../components/analytics/EmptyAnalyticsState";
 import LoadingSkeleton from "../components/analytics/LoadingSkeleton";
 
 const Analytics = () => {
-  const { leads } = useLeads();
+  const { leads, heatmapData } = useLeads();
   const [activeFilter, setActiveFilter] = useState("last30");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [isBootstrapping, setIsBootstrapping] = useState(true);
@@ -80,7 +80,7 @@ const Analytics = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
-        <ActivityHeatmap data={analytics.charts.activityHeatmap} />
+        <ActivityHeatmap data={heatmapData} />
         <TopPerformersCard performers={analytics.widgets.topPerformers} />
       </div>
 

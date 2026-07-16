@@ -15,12 +15,19 @@ const BarTooltip = ({ active, payload, label }) => {
 };
 
 const BarChartCard = memo(function BarChartCard({ data = [] }) {
+  const hasLeads = data.length > 0 && data.some((item) => item.leads > 0);
+
   return (
     <Card className="h-full">
       <CardHeader title="Monthly Leads Trend" description="Lead volume over the last 6 months" />
       <CardContent>
-        <ChartContainer>
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        {!hasLeads ? (
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-4 text-center text-sm text-slate-500">
+            No leads available.
+          </div>
+        ) : (
+          <ChartContainer>
+            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={CHART_COLORS.border} />
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.slate, fontSize: 12 }} />
               <YAxis
@@ -32,8 +39,9 @@ const BarChartCard = memo(function BarChartCard({ data = [] }) {
               />
               <Tooltip content={<BarTooltip />} cursor={{ fill: "rgba(37, 99, 235, 0.08)" }} />
               <Bar dataKey="leads" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} isAnimationActive />
-          </BarChart>
-        </ChartContainer>
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

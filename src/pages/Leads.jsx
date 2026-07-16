@@ -184,7 +184,7 @@ export default function Leads() {
             <div className="hidden md:block">
               {viewMode === "table" ? (
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                  <LeadTable leads={filteredLeads} onEdit={handleEditClick} onDelete={handleDelete} compact />
+                  <LeadTable leads={filteredLeads} onEdit={handleEditClick} onDelete={handleDelete} />
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-5 xl:grid-cols-3">

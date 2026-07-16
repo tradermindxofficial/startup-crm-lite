@@ -14,13 +14,22 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
     phone: "",
     status: "New",
     source: "Website",
+    dealValue: "",
+    expectedCloseDate: "",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      const formattedData = {
+        ...initialData,
+        dealValue: initialData.dealValue !== undefined && initialData.dealValue !== null ? initialData.dealValue : "",
+        expectedCloseDate: initialData.expectedCloseDate 
+          ? new Date(initialData.expectedCloseDate).toISOString().split("T")[0] 
+          : "",
+      };
+      setFormData(formattedData);
     }
   }, [initialData]);
 
@@ -40,12 +49,21 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
     if (!formData.company.trim()) newErrors.company = "Company is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
 
+    const parsedDealValue = formData.dealValue !== "" ? parseFloat(formData.dealValue) : 0;
+    if (isNaN(parsedDealValue) || parsedDealValue < 0) {
+      newErrors.dealValue = "Deal value must be a non-negative number";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      dealValue: parsedDealValue,
+      expectedCloseDate: formData.expectedCloseDate || null,
+    });
   };
 
   const inputClass = (field) =>
@@ -79,14 +97,46 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
         {errors.email ? <p className="mt-1 text-sm text-red-500">{errors.email}</p> : null}
       </div>
 
-      <div>
-        <label htmlFor="phone" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Phone
-        </label>
-        <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:text-sm" placeholder="(555) 123-4567" />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="phone" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Phone
+          </label>
+          <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:text-sm" placeholder="(555) 123-4567" />
+        </div>
+        <div>
+          <label htmlFor="dealValue" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Deal Value (₹)
+          </label>
+          <input 
+            type="number" 
+            id="dealValue" 
+            name="dealValue" 
+            min="0"
+            step="any"
+            value={formData.dealValue} 
+            onChange={handleChange} 
+            className={inputClass("dealValue")} 
+            placeholder="Enter deal amount" 
+          />
+          {errors.dealValue ? <p className="mt-1 text-sm text-red-500">{errors.dealValue}</p> : null}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="expectedCloseDate" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Expected Close Date
+          </label>
+          <input 
+            type="date" 
+            id="expectedCloseDate" 
+            name="expectedCloseDate" 
+            value={formData.expectedCloseDate} 
+            onChange={handleChange} 
+            className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:text-sm" 
+          />
+        </div>
         <div>
           <label htmlFor="status" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Status
@@ -99,18 +149,19 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="source" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Source
-          </label>
-          <select id="source" name="source" value={formData.source} onChange={handleChange} className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:text-sm">
-            {SOURCE_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        </div>
+      </div>
+
+      <div>
+        <label htmlFor="source" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Source
+        </label>
+        <select id="source" name="source" value={formData.source} onChange={handleChange} className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:text-sm">
+          {SOURCE_OPTIONS.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="mt-6 flex flex-col-reverse gap-3 border-t border-gray-200 pt-4 dark:border-gray-800 sm:flex-row sm:justify-end">
