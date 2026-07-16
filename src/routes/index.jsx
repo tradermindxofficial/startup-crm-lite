@@ -11,6 +11,9 @@ const Login = lazy(() => import('../pages/Login'));
 const Register = lazy(() => import('../pages/Register'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
+const HelpSupport = lazy(() => import('../pages/HelpSupport'));
+const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
+const TermsConditions = lazy(() => import('../pages/TermsConditions'));
 
 /**
  * Route protection guard.
@@ -56,6 +59,9 @@ export default function AppRoutes() {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<HelpSupport />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
         </Route>
 
         {/* Fallback 404 handler */}
