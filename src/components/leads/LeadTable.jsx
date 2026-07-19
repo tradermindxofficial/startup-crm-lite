@@ -4,7 +4,7 @@
 import React from "react";
 import { Edit2, Trash2 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
-import { formatCurrency } from "../../utils/analyticsHelpers";
+import { formatCurrency, formatDate } from "../../utils/analyticsHelpers";
 
 export default function LeadTable({ leads, onEdit, onDelete, compact = false }) {
   return (
@@ -61,13 +61,7 @@ export default function LeadTable({ leads, onEdit, onDelete, compact = false }) 
                 }).format(new Date(lead.expectedCloseDate))
               : "—";
 
-            const formattedDate = lead.dateAdded || lead.createdAt
-              ? new Intl.DateTimeFormat("en-IN", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                }).format(new Date(lead.dateAdded || lead.createdAt))
-              : "—";
+            const formattedDate = formatDate(lead.createdAt || lead.dateAdded);
 
             return (
               <tr key={lead.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/30">

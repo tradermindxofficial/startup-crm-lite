@@ -13,55 +13,302 @@
   --space-2xl: 48px;
   --space-3xl: 64px;
 
-  /* Colors - Light Mode */
+  /* Tokyo Night Brand Color Palette - Light Mode */
   --bg-base: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-surface-hover: #F1F5F9;
+  --bg-surface: #EDF2F7;
+  --bg-surface-hover: #D9E2EF;
   
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-inverse: #FFFFFF;
+  --text-primary: #1A2330;
+  --text-secondary: #4E5D78;
+  --text-inverse: #F8FAFC;
 
-  --border-color: #E2E8F0;
+  --border-color: #D9E2EF;
 
-  --color-primary: #2563EB;
-  --color-primary-hover: #1D4ED8;
-  --color-success: #22C55E;
-  --color-success-bg: #DCFCE7;
+  --color-primary: #3B5CCC;
+  --color-primary-hover: #2F4BA3;
+  --color-secondary: #5E81F4;
+  --color-accent: #FF8F5A;
+
+  --color-success: #10B981;
+  --color-success-bg: #E6F7F0;
   --color-warning: #F59E0B;
-  --color-warning-bg: #FEF3C7;
+  --color-warning-bg: #FEF8EC;
   --color-danger: #EF4444;
-  --color-danger-bg: #FEE2E2;
+  --color-danger-bg: #FEEFEE;
+
+  /* Brand Chart / Status Colors */
+  --color-status-new: #5E81F4;
+  --color-status-contacted: #3B5CCC;
+  --color-status-meeting: #FF8F5A;
+  --color-status-proposal: #8B5CF6;
+  --color-status-won: #10B981;
+  --color-status-lost: #EF4444;
+
+  --color-chart-primary: #3B5CCC;
+  --color-chart-primary-soft: #5E81F4;
+  --color-chart-success: #10B981;
+  --color-chart-success-soft: #A7F3D0;
+  --color-chart-warning: #F59E0B;
+  --color-chart-slate: #4E5D78;
+  --color-chart-border: #D9E2EF;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 
   /* Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+
+  /* Gray theme override variables for light mode */
+  --theme-gray-50: #F8FAFC;
+  --theme-gray-100: #EDF2F7;
+  --theme-gray-200: #D9E2EF;
+  --theme-gray-300: #CBD5E1;
+  --theme-gray-400: #94A3B8;
+  --theme-gray-500: #4E5D78;
+  --theme-gray-600: #334155;
+  --theme-gray-700: #1A2330;
+  --theme-gray-800: #111827;
+  --theme-gray-900: #0F172A;
+  --theme-gray-950: #080C14;
 }
 
 .dark {
-    /* Colors - Dark Mode */
-    --bg-base: #020617;
-    --bg-surface: #0F172A;
-    --bg-surface-hover: #1E293B;
+    /* Accessibility Dark Mode Palette */
+    --bg-base: #0F172A;
+    --bg-surface: #1E293B;
+    --bg-surface-hover: #243248;
     
-    --text-primary: #F8FAFC;
-    --text-secondary: #94A3B8;
+    --text-primary: #FFFFFF;
+    --text-secondary: #CBD5E1;
     
-    --border-color: #1E293B;
+    --border-color: #334155;
+
+    --color-primary: #6C8DFF;
+    --color-primary-hover: #8BB4FF;
+    --color-secondary: #9EB4FF;
+    --color-accent: #FFA26E;
     
-    /* Keep brand colors mostly the same but maybe tweak backgrounds */
-    --color-success-bg: rgba(34, 197, 94, 0.2);
-    --color-warning-bg: rgba(245, 158, 11, 0.2);
-    --color-danger-bg: rgba(239, 68, 68, 0.2);
+    --color-success: #34D399;
+    --color-success-bg: rgba(52, 211, 153, 0.25);
+    --color-warning: #FBBF24;
+    --color-warning-bg: rgba(251, 191, 36, 0.25);
+    --color-danger: #F87171;
+    --color-danger-bg: rgba(248, 113, 113, 0.25);
+
+    /* Brand Chart / Status Colors */
+    --color-status-new: #9EB4FF;
+    --color-status-contacted: #6C8DFF;
+    --color-status-meeting: #FFA26E;
+    --color-status-proposal: #A78BFA;
+    --color-status-won: #34D399;
+    --color-status-lost: #F87171;
+
+    --color-chart-primary: #6C8DFF;
+    --color-chart-primary-soft: #9EB4FF;
+    --color-chart-success: #34D399;
+    --color-chart-success-soft: rgba(52, 211, 153, 0.25);
+    --color-chart-warning: #FBBF24;
+    --color-chart-slate: #8A99AD;
+    --color-chart-border: #334155;
     
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -1px rgba(0, 0, 0, 0.25);
+
+    /* Gray theme override variables for dark mode (accessibility optimized) */
+    --theme-gray-50: #1E293B;       /* Input backgrounds / highlight bgs */
+    --theme-gray-100: #FFFFFF;      /* Primary text (active nav text / active text) */
+    --theme-gray-200: #FFFFFF;      /* Inactive text hover, primary text */
+    --theme-gray-300: #CBD5E1;      /* Secondary text */
+    --theme-gray-400: #CBD5E1;      /* Inactive navigation text / Secondary text */
+    --theme-gray-500: #94A3B8;      /* Muted text / placeholders */
+    --theme-gray-600: #64748B;      /* Disabled text */
+    --theme-gray-700: #334155;      /* Border colors */
+    --theme-gray-800: #334155;      /* Active bgs, borders */
+    --theme-gray-900: #1E293B;      /* Card / panel backgrounds */
+    --theme-gray-950: #0F172A;      /* Page backgrounds */
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+
+  /* Overriding standard Tailwind colors to align with our brand colors */
+  --color-blue-50: var(--bg-base);
+  --color-blue-100: var(--bg-surface);
+  --color-blue-200: var(--bg-surface-hover);
+  --color-blue-300: var(--color-secondary);
+  --color-blue-400: var(--color-secondary);
+  --color-blue-500: var(--color-primary);
+  --color-blue-600: var(--color-primary);
+  --color-blue-700: var(--color-primary-hover);
+  --color-blue-800: var(--color-primary-hover);
+  --color-blue-900: var(--color-primary-hover);
+  --color-blue-950: var(--color-primary-hover);
+
+  --color-indigo-50: var(--color-warning-bg);
+  --color-indigo-100: var(--color-warning-bg);
+  --color-indigo-500: var(--color-accent);
+  --color-indigo-600: var(--color-accent);
+  --color-indigo-700: var(--color-accent);
+  --color-indigo-800: var(--color-accent);
+  --color-indigo-900: var(--color-accent);
+
+  --color-purple-50: var(--color-warning-bg);
+  --color-purple-100: var(--color-warning-bg);
+  --color-purple-500: var(--color-accent);
+  --color-purple-600: var(--color-accent);
+  --color-purple-700: var(--color-accent);
+  
+  --color-violet-50: var(--color-warning-bg);
+  --color-violet-100: var(--color-warning-bg);
+  --color-violet-500: var(--color-accent);
+  --color-violet-600: var(--color-accent);
+  --color-violet-700: var(--color-accent);
+
+  --color-pink-50: var(--color-warning-bg);
+  --color-pink-500: var(--color-accent);
+
+  --color-gray-50: var(--theme-gray-50);
+  --color-gray-100: var(--theme-gray-100);
+  --color-gray-200: var(--theme-gray-200);
+  --color-gray-300: var(--theme-gray-300);
+  --color-gray-400: var(--theme-gray-400);
+  --color-gray-500: var(--theme-gray-500);
+  --color-gray-600: var(--theme-gray-600);
+  --color-gray-700: var(--theme-gray-700);
+  --color-gray-800: var(--theme-gray-800);
+  --color-gray-900: var(--theme-gray-900);
+  --color-gray-950: var(--theme-gray-950);
+
+  --color-slate-50: var(--theme-gray-50);
+  --color-slate-100: var(--theme-gray-100);
+  --color-slate-200: var(--theme-gray-200);
+  --color-slate-300: var(--theme-gray-300);
+  --color-slate-400: var(--theme-gray-400);
+  --color-slate-500: var(--theme-gray-500);
+  --color-slate-600: var(--theme-gray-600);
+  --color-slate-700: var(--theme-gray-700);
+  --color-slate-800: var(--theme-gray-800);
+  --color-slate-900: var(--theme-gray-900);
+  --color-slate-950: var(--theme-gray-950);
+
+  --color-neutral-50: var(--theme-gray-50);
+  --color-neutral-100: var(--theme-gray-100);
+  --color-neutral-200: var(--theme-gray-200);
+  --color-neutral-300: var(--theme-gray-300);
+  --color-neutral-400: var(--theme-gray-400);
+  --color-neutral-500: var(--theme-gray-500);
+  --color-neutral-600: var(--theme-gray-600);
+  --color-neutral-700: var(--theme-gray-700);
+  --color-neutral-800: var(--theme-gray-800);
+  --color-neutral-900: var(--theme-gray-900);
+  --color-neutral-950: var(--theme-gray-950);
+
+  --color-red-50: var(--color-danger-bg);
+  --color-red-100: var(--color-danger-bg);
+  --color-red-200: var(--color-danger-bg);
+  --color-red-500: var(--color-danger);
+  --color-red-600: var(--color-danger);
+  --color-red-700: var(--color-danger);
+  
+  --color-rose-50: var(--color-danger-bg);
+  --color-rose-100: var(--color-danger-bg);
+  --color-rose-200: var(--color-danger-bg);
+  --color-rose-500: var(--color-danger);
+  --color-rose-600: var(--color-danger);
+  --color-rose-700: var(--color-danger);
+
+  --color-green-50: var(--color-success-bg);
+  --color-green-100: var(--color-success-bg);
+  --color-green-200: var(--color-success-bg);
+  --color-green-500: var(--color-success);
+  --color-green-600: var(--color-success);
+  --color-green-700: var(--color-success);
+
+  --color-emerald-50: var(--color-success-bg);
+  --color-emerald-100: var(--color-success-bg);
+  --color-emerald-200: var(--color-success-bg);
+  --color-emerald-500: var(--color-success);
+  --color-emerald-600: var(--color-success);
+  --color-emerald-700: var(--color-success);
+
+  --color-amber-50: var(--color-warning-bg);
+  --color-amber-100: var(--color-warning-bg);
+  --color-amber-200: var(--color-warning-bg);
+  --color-amber-500: var(--color-warning);
+  --color-amber-600: var(--color-warning);
+  --color-amber-700: var(--color-warning);
+  
+  --color-yellow-50: var(--color-warning-bg);
+  --color-yellow-100: var(--color-warning-bg);
+  --color-yellow-200: var(--color-warning-bg);
+  --color-yellow-500: var(--color-warning);
+  --color-yellow-600: var(--color-warning);
+  --color-yellow-700: var(--color-warning);
+}
+/* Page background overrides in dark mode */
+.dark .bg-gray-50, .dark .bg-slate-50, .dark .dark\:bg-gray-900 {
+  background-color: var(--bg-base) !important;
+}
+
+/* Specific main layout page containers */
+.dark .min-h-screen.dark\:bg-gray-900 {
+  background-color: var(--bg-base) !important;
+}
+
+/* Card, panel, and sidebar overrides in dark mode */
+.dark .card, .dark .bg-white, .dark .dark\:bg-gray-950\/40, .dark aside.dark\:bg-gray-900 {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Table container, dropdowns, and modal overrides in dark mode */
+.dark .overflow-x-auto, .dark table, .dark thead tr, .dark tbody tr {
+  border-color: var(--border-color) !important;
+}
+
+
+/* Global utility overrides to enforce surface & background design tokens */
+.bg-white {
+  background-color: var(--bg-surface) !important;
+}
+.bg-gray-50, .bg-slate-50 {
+  background-color: var(--bg-base) !important;
+}
+
+/* Sidebar background override */
+aside.bg-\[\#F9FAFB\] {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Hot Toast Notifications container styling */
+div[role="status"] > div {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 

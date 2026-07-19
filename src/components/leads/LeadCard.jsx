@@ -4,16 +4,10 @@
 import React from "react";
 import { Building2, Calendar, Edit2, Globe2, Mail, Phone, Trash2 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
-import { formatCurrency } from "../../utils/analyticsHelpers";
+import { formatCurrency, formatDate } from "../../utils/analyticsHelpers";
 
 export default function LeadCard({ lead, onEdit, onDelete }) {
-  const formattedDate = lead.dateAdded || lead.createdAt
-    ? new Intl.DateTimeFormat("en-IN", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }).format(new Date(lead.dateAdded || lead.createdAt))
-    : "Not added";
+  const formattedDate = formatDate(lead.createdAt || lead.dateAdded);
 
   const formattedCloseDate = lead.expectedCloseDate
     ? new Intl.DateTimeFormat("en-IN", {

@@ -1,20 +1,20 @@
 export const STATUS_COLORS = {
-  New: "#94A3B8",
-  Contacted: "#2563EB",
-  Meeting: "#F59E0B",
-  Proposal: "#7C3AED",
-  Won: "#22C55E",
-  Lost: "#EF4444",
+  New: "var(--color-status-new)",
+  Contacted: "var(--color-status-contacted)",
+  Meeting: "var(--color-status-meeting)",
+  Proposal: "var(--color-status-proposal)",
+  Won: "var(--color-status-won)",
+  Lost: "var(--color-status-lost)",
 };
 
 export const STATUS_ORDER = ["New", "Contacted", "Meeting", "Proposal", "Won", "Lost"];
 
 export const CHART_COLORS = {
-  primary: "#2563EB",
-  primarySoft: "#93C5FD",
-  success: "#22C55E",
-  successSoft: "#86EFAC",
-  warning: "#F59E0B",
-  slate: "#64748B",
-  border: "#E2E8F0",
+  primary: "var(--color-chart-primary)",
+  primarySoft: "var(--color-chart-primary-soft)",
+  success: "var(--color-chart-success)",
+  successSoft: "var(--color-chart-success-soft)",
+  warning: "var(--color-chart-warning)",
+  slate: "var(--color-chart-slate)",
+  border: "var(--color-chart-border)",
 };

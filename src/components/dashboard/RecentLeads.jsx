@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { formatDate } from '../../utils/analyticsHelpers';
 
 /**
  * @typedef {Object} Lead
@@ -76,7 +77,7 @@ export default function RecentLeads({ leads }) {
                     {lead.status}
                   </span>
                 </td>
-                <td className="hidden px-5 py-3 text-sm text-gray-500 dark:text-gray-400 md:table-cell">{lead.dateAdded}</td>
+                <td className="hidden px-5 py-3 text-sm text-gray-500 dark:text-gray-400 md:table-cell">{formatDate(lead.createdAt)}</td>
               </tr>
             ))}
             {recentLeads.length === 0 && (

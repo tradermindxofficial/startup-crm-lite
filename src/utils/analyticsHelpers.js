@@ -43,6 +43,17 @@ export const formatCurrency = (amount) =>
 
 export const formatPercent = (value) => `${Number.isFinite(value) ? value.toFixed(1) : "0.0"}%`;
 
+export const formatDate = (dateValue) => {
+  if (!dateValue) return "—";
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+};
+
 export function getStatusDistribution(leads = []) {
   const total = leads.length || 1;
   const counts = new Map(STATUS_ORDER.map((status) => [status, 0]));
