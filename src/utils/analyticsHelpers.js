@@ -8,6 +8,14 @@ const safeDate = (value) => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+const toLocalISOString = (date) => {
+  if (!date) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const toNumber = (value) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
@@ -180,15 +188,13 @@ export function getLeadSourceStats(leads = []) {
 
 export function getFunnelData(leads = []) {
   const baseStages = ["New", "Contacted", "Meeting", "Proposal", "Won"];
-  const stageToRank = { New: 1, Contacted: 2, Meeting: 3, Proposal: 4, Won: 5, Lost: 0 };
   const stageCounts = Object.fromEntries(baseStages.map((stage) => [stage, 0]));
 
   leads.forEach((lead) => {
     const status = normalizeStatus(lead?.status);
-    const rank = stageToRank[status] ?? 1;
-    baseStages.forEach((stage, index) => {
-      if (rank >= index + 1) stageCounts[stage] += 1;
-    });
+    if (stageCounts[status] !== undefined) {
+      stageCounts[status] += 1;
+    }
   });
 
   return baseStages.map((stage, index) => {
@@ -220,6 +226,9 @@ export function getSalesVelocity(leads = []) {
 }
 
 export function getForecastRevenue(leads = []) {
+  const wonLeads = leads.filter((lead) => normalizeStatus(lead?.status) === "Won");
+  const hasWon = wonLeads.length > 0;
+
   const monthly = getRevenueByMonth(leads);
   const values = monthly.map((item) => item.revenue);
   const avg = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
@@ -232,6 +241,7 @@ export function getForecastRevenue(leads = []) {
     predictedRevenue: Number(avg.toFixed(0)),
     confidence,
     growth,
+    hasForecast: hasWon,
   };
 }
 
@@ -259,11 +269,16 @@ export function getActivityHeatmapData(leads = [], days = 120) {
   for (let index = 0; index < days; index += 1) {
     const current = new Date(firstDay);
     current.setDate(firstDay.getDate() + index);
-    dailyMap.set(current.toISOString().slice(0, 10), {
-      date: current.toISOString().slice(0, 10),
+    const localIso = toLocalISOString(current);
+    dailyMap.set(localIso, {
+      date: localIso,
       created: 0,
       meetings: 0,
       calls: 0,
+      proposals: 0,
+      won: 0,
+      lost: 0,
+      edits: 0,
       total: 0,
     });
   }
@@ -271,8 +286,8 @@ export function getActivityHeatmapData(leads = [], days = 120) {
   const updateCount = (dateString, key) => {
     const date = safeDate(dateString);
     if (!date) return;
-    const iso = date.toISOString().slice(0, 10);
-    const row = dailyMap.get(iso);
+    const localIso = toLocalISOString(date);
+    const row = dailyMap.get(localIso);
     if (!row) return;
     row[key] += 1;
     row.total += 1;
@@ -280,24 +295,30 @@ export function getActivityHeatmapData(leads = [], days = 120) {
 
   leads.forEach((lead) => {
     updateCount(lead?.createdAt, "created");
-    updateCount(lead?.meetingAt, "meetings");
     updateCount(lead?.contactedAt, "calls");
+    updateCount(lead?.meetingAt, "meetings");
+    updateCount(lead?.proposalAt, "proposals");
+    updateCount(lead?.wonAt, "won");
+    updateCount(lead?.lostAt, "lost");
+    if (
+      lead?.updatedAt &&
+      lead?.createdAt &&
+      new Date(lead.updatedAt).getTime() !== new Date(lead.createdAt).getTime()
+    ) {
+      updateCount(lead.updatedAt, "edits");
+    }
   });
 
   return [...dailyMap.values()];
 }
 
-export function getTotalRevenuePipeline(leads = []) {
-  return leads.reduce((sum, lead) => sum + toNumber(lead?.dealValue), 0);
-}
-
 export function getAverageDealValue(leads = []) {
   if (!leads.length) return 0;
-  const total = getTotalRevenuePipeline(leads);
+  const total = leads.reduce((sum, lead) => sum + getLeadValue(lead), 0);
   return total / leads.length;
 }
 
 export function getHighestDealValue(leads = []) {
   if (!leads.length) return 0;
-  return Math.max(...leads.map((lead) => toNumber(lead?.dealValue)), 0);
+  return Math.max(...leads.map((lead) => getLeadValue(lead)), 0);
 }

@@ -20,15 +20,21 @@ const useResponsiveViewMode = () => {
 };
 
 export default function Leads() {
-  const { leads, addLead, updateLead, deleteLead } = useLeads();
+  const { 
+    leads, 
+    addLead, 
+    updateLead, 
+    deleteLead, 
+    searchQuery, 
+    setSearchQuery, 
+    activeFilter, 
+    setActiveFilter 
+  } = useLeads();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [leadToDelete, setLeadToDelete] = useState(null);
   const [viewMode, setViewMode] = useResponsiveViewMode();
   const location = useLocation();
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
     if (location.state?.openAddModal) {
@@ -43,9 +49,12 @@ export default function Leads() {
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase();
       return (
-        lead.name.toLowerCase().includes(q) ||
-        lead.company.toLowerCase().includes(q) ||
-        lead.email.toLowerCase().includes(q)
+        (lead.name || "").toLowerCase().includes(q) ||
+        (lead.company || "").toLowerCase().includes(q) ||
+        (lead.email || "").toLowerCase().includes(q) ||
+        (lead.phone || "").toLowerCase().includes(q) ||
+        (lead.source || "").toLowerCase().includes(q) ||
+        (lead.status || "").toLowerCase().includes(q)
       );
     });
 

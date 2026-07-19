@@ -6,7 +6,7 @@ import { formatCurrency } from "../../utils/analyticsHelpers";
 const ForecastCard = memo(function ForecastCard({ forecast }) {
   const growth = forecast?.growth ?? 0;
   const isPositive = growth >= 0;
-  const hasForecast = forecast && forecast.predictedRevenue > 0;
+  const hasForecast = forecast && forecast.hasForecast;
 
   return (
     <Card className="h-full">

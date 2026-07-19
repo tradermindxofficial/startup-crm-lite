@@ -11,6 +11,8 @@ export const LeadContext = createContext(null);
  */
 export function LeadProvider({ children }) {
   const [leads, setLeadsState] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
@@ -198,6 +200,10 @@ export function LeadProvider({ children }) {
         updateLead,
         deleteLead,
         getLeadById,
+        searchQuery,
+        setSearchQuery,
+        activeFilter,
+        setActiveFilter,
       }}
     >
       {children}

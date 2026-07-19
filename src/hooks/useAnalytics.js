@@ -15,6 +15,8 @@ import {
   getTopPerformers,
   getWonRevenue,
   normalizeStatus,
+  getAverageDealValue,
+  getHighestDealValue,
 } from "../utils/analyticsHelpers";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -94,25 +96,39 @@ export default function useAnalytics(leads = [], filter = "last30", customRange 
     const currentLeads = filterLeadsByRange(leads, currentRange);
     const previousLeads = filterLeadsByRange(leads, previousRange);
 
-    const totalLeads = currentLeads.length;
-    const previousTotalLeads = previousLeads.length;
-    const wonCount = currentLeads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
-    const previousWonCount = previousLeads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
-    const lostRate = getLostRate(currentLeads);
-    const previousLostRate = getLostRate(previousLeads);
+    const totalLeads = leads.length;
+    const wonCount = leads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
+    const lostRate = getLostRate(leads);
     const conversionRate = totalLeads ? Number(((wonCount / totalLeads) * 100).toFixed(1)) : 0;
-    const previousConversionRate = previousTotalLeads
-      ? Number(((previousWonCount / previousTotalLeads) * 100).toFixed(1))
-      : 0;
+    const pipelineValue = getPipelineValue(leads);
+    const wonRevenue = getWonRevenue(leads);
+    const avgSalesCycle = getAverageSalesCycle(leads);
+    const averageDeal = getAverageDealValue(leads);
+    const highestDeal = getHighestDealValue(leads);
 
-    const pipelineValue = getPipelineValue(currentLeads);
+    // Period-filtered leads for growth calculations
+    const currentTotalLeads = currentLeads.length;
+    const previousTotalLeads = previousLeads.length;
+    const currentWonCount = currentLeads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
+    const previousWonCount = previousLeads.filter((lead) => normalizeStatus(lead?.status) === "Won").length;
+    const currentLostRate = getLostRate(currentLeads);
+    const previousLostRate = getLostRate(previousLeads);
+    const currentConversionRate = currentTotalLeads ? Number(((currentWonCount / currentTotalLeads) * 100).toFixed(1)) : 0;
+    const previousConversionRate = previousTotalLeads ? Number(((previousWonCount / previousTotalLeads) * 100).toFixed(1)) : 0;
+    const currentPipelineValue = getPipelineValue(currentLeads);
     const previousPipelineValue = getPipelineValue(previousLeads);
-    const wonRevenue = getWonRevenue(currentLeads);
+    const currentWonRevenue = getWonRevenue(currentLeads);
     const previousWonRevenue = getWonRevenue(previousLeads);
-    const avgSalesCycle = getAverageSalesCycle(currentLeads);
+    const currentAvgSalesCycle = getAverageSalesCycle(currentLeads);
     const previousAvgSalesCycle = getAverageSalesCycle(previousLeads);
-    const salesVelocity = getSalesVelocity(currentLeads);
-    const previousSalesVelocity = getSalesVelocity(previousLeads);
+    const currentAverageDeal = getAverageDealValue(currentLeads);
+    const previousAverageDeal = getAverageDealValue(previousLeads);
+    const currentHighestDeal = getHighestDealValue(currentLeads);
+    const previousHighestDeal = getHighestDealValue(previousLeads);
+
+    const salesVelocity = getSalesVelocity(leads);
+    const currentSalesVelocityForGrowth = getSalesVelocity(currentLeads);
+    const previousSalesVelocityForGrowth = getSalesVelocity(previousLeads);
 
     return {
       filteredLeads: currentLeads,
@@ -124,29 +140,33 @@ export default function useAnalytics(leads = [], filter = "last30", customRange 
         wonRevenue,
         avgSalesCycle,
         lostRate,
+        averageDeal,
+        highestDeal,
       },
       growth: {
-        totalLeads: calculateGrowth(totalLeads, previousTotalLeads),
-        conversionRate: calculateGrowth(conversionRate, previousConversionRate),
-        pipelineValue: calculateGrowth(pipelineValue, previousPipelineValue),
-        wonRevenue: calculateGrowth(wonRevenue, previousWonRevenue),
-        avgSalesCycle: calculateGrowth(avgSalesCycle, previousAvgSalesCycle),
-        lostRate: calculateGrowth(lostRate, previousLostRate),
-        salesVelocity: calculateGrowth(salesVelocity.velocity, previousSalesVelocity.velocity),
+        totalLeads: calculateGrowth(currentTotalLeads, previousTotalLeads),
+        conversionRate: calculateGrowth(currentConversionRate, previousConversionRate),
+        pipelineValue: calculateGrowth(currentPipelineValue, previousPipelineValue),
+        wonRevenue: calculateGrowth(currentWonRevenue, previousWonRevenue),
+        avgSalesCycle: calculateGrowth(currentAvgSalesCycle, previousAvgSalesCycle),
+        lostRate: calculateGrowth(currentLostRate, previousLostRate),
+        averageDeal: calculateGrowth(currentAverageDeal, previousAverageDeal),
+        highestDeal: calculateGrowth(currentHighestDeal, previousHighestDeal),
+        salesVelocity: calculateGrowth(currentSalesVelocityForGrowth.velocity, previousSalesVelocityForGrowth.velocity),
       },
       charts: {
         statusDistribution: getStatusDistribution(currentLeads),
         funnelData: getFunnelData(currentLeads),
-        monthlyLeads: getMonthlyLeads(currentLeads),
-        conversionByMonth: getConversionByMonth(currentLeads),
-        revenueByMonth: getRevenueByMonth(currentLeads),
-        leadSourceStats: getLeadSourceStats(currentLeads),
-        activityHeatmap: getActivityHeatmapData(currentLeads),
+        monthlyLeads: getMonthlyLeads(leads),
+        conversionByMonth: getConversionByMonth(leads),
+        revenueByMonth: getRevenueByMonth(leads),
+        leadSourceStats: getLeadSourceStats(leads),
+        activityHeatmap: getActivityHeatmapData(leads),
       },
       widgets: {
         salesVelocity,
-        forecast: getForecastRevenue(currentLeads),
-        topPerformers: getTopPerformers(currentLeads),
+        forecast: getForecastRevenue(leads),
+        topPerformers: getTopPerformers(leads),
       },
     };
   }, [leads, filter, customRange?.end, customRange?.start]);

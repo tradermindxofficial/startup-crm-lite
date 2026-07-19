@@ -1,12 +1,54 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, Menu, Command, User, Settings, LogOut } from "lucide-react";
+import { Search, Bell, Menu, Command, User, Settings, LogOut, X } from "lucide-react";
 import toast from "react-hot-toast";
 import DarkModeToggle from "./DarkModeToggle";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useLeads } from "../../context/LeadContext.jsx";
 
 export default function TopBar({ onOpenMobileMenu }) {
   const { user, logout } = useAuth();
+  const { searchQuery, setSearchQuery, setActiveFilter } = useLeads();
+  const [localQuery, setLocalQuery] = useState(searchQuery);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    setLocalQuery(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setLocalQuery(val);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setSearchQuery(val);
+      if (val && window.location.pathname !== "/leads") {
+        navigate("/leads");
+      }
+    }, 300);
+  };
+
+  const handleClear = () => {
+    setLocalQuery("");
+    setSearchQuery("");
+    setActiveFilter("All");
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   
@@ -147,10 +189,21 @@ export default function TopBar({ onOpenMobileMenu }) {
           />
           <input
             type="text"
-            disabled
-            placeholder="Search leads from the Leads Management page..."
-            className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-4 text-sm text-gray-400 transition-colors placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-500 cursor-not-allowed opacity-80"
+            value={localQuery}
+            onChange={handleSearchChange}
+            placeholder="Search leads across CRM..."
+            className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-10 text-sm text-gray-900 transition-colors placeholder:text-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500"
           />
+          {localQuery && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
 

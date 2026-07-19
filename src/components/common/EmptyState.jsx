@@ -39,7 +39,7 @@ export default function EmptyState({ totalLeads, searchQuery, activeFilter, onCl
         <SearchX className="w-7 h-7 text-gray-400 dark:text-gray-500" />
       </div>
       <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
-        No leads found
+        {isFiltered ? "No matching leads found." : "No leads found"}
       </h3>
       <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-5">
         {searchQuery && activeFilter !== 'All'

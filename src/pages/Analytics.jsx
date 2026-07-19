@@ -80,7 +80,7 @@ const Analytics = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
-        <ActivityHeatmap data={heatmapData} />
+        <ActivityHeatmap data={analytics.charts.activityHeatmap} />
         <TopPerformersCard performers={analytics.widgets.topPerformers} />
       </div>
 

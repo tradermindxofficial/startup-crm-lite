@@ -8,6 +8,7 @@ import {
   TrendingDown,
   ArrowUpRight,
   ArrowDownRight,
+  Activity,
 } from "lucide-react";
 import { Card, CardContent } from "./Card";
 import { formatCurrency, formatPercent } from "../../utils/analyticsHelpers";
@@ -101,6 +102,22 @@ const StatsCards = memo(function StatsCards({ stats, growth }) {
       trend: growth.lostRate,
       inverseTrend: true,
       accent: "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300",
+    },
+    {
+      key: "averageDeal",
+      icon: Activity,
+      label: "Average Deal",
+      value: formatCurrency(stats.averageDeal),
+      trend: growth.averageDeal,
+      accent: "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300",
+    },
+    {
+      key: "highestDeal",
+      icon: TrendingUp,
+      label: "Highest Deal",
+      value: formatCurrency(stats.highestDeal),
+      trend: growth.highestDeal,
+      accent: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300",
     },
   ];
 

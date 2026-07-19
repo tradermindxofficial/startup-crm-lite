@@ -10,7 +10,7 @@ import RecentLeads from "../components/dashboard/RecentLeads";
 import QuickActions from "../components/dashboard/QuickActions";
 import { useLeads } from "../context/LeadContext";
 import { 
-  getTotalRevenuePipeline, 
+  getPipelineValue, 
   getAverageDealValue, 
   getHighestDealValue, 
   formatCurrency 
@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   // Dashboard statistics computed dynamically
   const totalLeads = leads.length;
-  const revenuePipeline = getTotalRevenuePipeline(leads);
+  const revenuePipeline = getPipelineValue(leads);
   const averageDeal = getAverageDealValue(leads);
   const highestDeal = getHighestDealValue(leads);
 
